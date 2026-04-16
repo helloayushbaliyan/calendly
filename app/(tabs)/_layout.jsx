@@ -1,7 +1,6 @@
-import { HapticTab } from "@/components/haptic-tab";
-import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { Entypo } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import "../../global.css";
 export default function TabLayout() {
@@ -10,9 +9,13 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].red,
+        tabBarActiveTintColor: Colors[colorScheme].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
+        tabBarStyle: {
+          backgroundColor: Colors[colorScheme].background,
+          paddingBottom: 16,
+          height: 75,
+        },
       }}
     >
       <Tabs.Screen
@@ -20,19 +23,38 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+            <Entypo name="home" size={24} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="calender"
         options={{
-          title: "Explore",
+          title: "Calender",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
+            <Entypo name="calendar" size={24} color={color} />
           ),
         }}
       />
+      <Tabs.Screen
+        name="bookings"
+        options={{
+          title: "Bookings",
+          tabBarIcon: ({ color }) => (
+            <Entypo name="briefcase" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color }) => (
+            <Entypo name="cog" size={24} color={color} />
+          ),
+        }}
+      />
+      k
     </Tabs>
   );
 }

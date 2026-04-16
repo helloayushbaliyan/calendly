@@ -1,13 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 const explore = () => {
   return (
-    <View>
+    <View className=" items-center justify-center bg-white">
       <Text>explore</Text>
     </View>
   );
 };
 
 export default explore;
-
-const styles = StyleSheet.create({});
