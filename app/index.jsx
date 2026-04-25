@@ -30,15 +30,15 @@ const index = () => {
             <Text className="text-center text-[35px] font-bold text-gray-700">
               Easy Scheduling
             </Text>
-            <Text className="text-center text-[16px] font- text-gray-500 leading-6 mt-4">
+            <Text className="text-center text-[18px] font- text-gray-500 leading-6 mt-4">
               The Temporal Architect of your workday. Organize your meetings
               with a curated editorial flow that breathes life into your
               calendar.
             </Text>
           </View>
           <TouchableOpacity
-            className="bg-[#007AFF] rounded-full py-5 px-6 mt-6 w-full flex justify-center items-center"
-            onPress={() => route.push("/home")}
+            className="bg-[#007AFF] rounded-2xl py-5 px-6 mt-6 w-full flex justify-center items-center"
+            onPress={() => route.push("/signin")}
           >
             <Text className="text-white font-bold text-xl">Get Started</Text>
           </TouchableOpacity>

@@ -54,7 +54,6 @@ export default function TabLayout() {
           ),
         }}
       />
-      k
     </Tabs>
   );
 }

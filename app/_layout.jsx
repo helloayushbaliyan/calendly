@@ -9,6 +9,11 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
       }}
-    ></Stack>
+    >
+      <Stack.Screen name="(auth)" />
+      <Stack.Screen name="index" />
+
+      <Stack.Screen name="(tabs)" />
+    </Stack>
   );
 }
