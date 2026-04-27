@@ -21,7 +21,7 @@ const Home = () => {
             />
           </View>
           <TouchableOpacity className="w-10 h-10 bg-white rounded-full items-center justify-center border border-gray-100 shadow-sm">
-            <Ionicons name="notifications-outline" size={20} color="#1F2937" />
+            <Ionicons name="notifications-" size={20} color="#1F2937" />
             <View className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
           </TouchableOpacity>
         </View>
