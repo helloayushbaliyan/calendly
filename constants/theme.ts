@@ -5,8 +5,8 @@
 
 import { Platform } from "react-native";
 
-const Primary = "#0a7ea4";
-const Secondary = "#C9996B";
+const Primary = "#007AFF";
+const Secondary = "#007AFF";
 
 export const Colors = {
   light: {
@@ -18,12 +18,12 @@ export const Colors = {
     tabIconSelected: Primary,
   },
   dark: {
-    text: "#ECEDEE",
-    background: "#151718",
-    tint: Secondary,
-    icon: "#9BA1A6",
-    tabIconDefault: "#9BA1A6",
-    tabIconSelected: Secondary,
+    text: "#11181C",
+    background: "#fff",
+    tint: Primary,
+    icon: "#687076",
+    tabIconDefault: "#687076",
+    tabIconSelected: Primary,
   },
 };
 

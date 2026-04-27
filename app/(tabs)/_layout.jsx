@@ -3,18 +3,34 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Entypo } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import "../../global.css";
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
         headerShown: false,
+        tabBarActiveTintColor: "#1D4ED8",
+        tabBarInactiveTintColor: "#94A3B8",
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "600",
+          marginTop: 4,
+        },
+        tabBarItemStyle: {
+          marginVertical: 10,
+          borderRadius: 17,
+          overflow: "hidden",
+        },
+        tabBarActiveBackgroundColor: "#eee7fc",
         tabBarStyle: {
-          backgroundColor: Colors[colorScheme].background,
-          paddingBottom: 16,
-          height: 75,
+          backgroundColor:
+            colorScheme === "dark" ? Colors[colorScheme].background : "#F8FAFC",
+          height: 90,
+          borderRadius: 17,
+          paddingHorizontal: 12,
+          paddingBottom: 6,
         },
       }}
     >
@@ -27,15 +43,17 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="calender"
         options={{
-          title: "Calender",
+          title: "Calendar",
           tabBarIcon: ({ color }) => (
             <Entypo name="calendar" size={24} color={color} />
           ),
         }}
       />
+
       <Tabs.Screen
         name="bookings"
         options={{
@@ -45,6 +63,17 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="alert"
+        options={{
+          title: "Alerts",
+          tabBarIcon: ({ color }) => (
+            <Entypo name="bell" size={24} color={color} />
+          ),
+        }}
+      />
+
       <Tabs.Screen
         name="settings"
         options={{
