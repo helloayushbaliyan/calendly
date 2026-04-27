@@ -19,7 +19,7 @@ export default function TabLayout() {
           marginTop: 4,
         },
         tabBarItemStyle: {
-          marginVertical: 10,
+          marginVertical: 16,
           borderRadius: 17,
           overflow: "hidden",
         },
@@ -27,7 +27,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor:
             colorScheme === "dark" ? Colors[colorScheme].background : "#F8FAFC",
-          height: 90,
+          height: 100,
           borderRadius: 17,
           paddingHorizontal: 12,
           paddingBottom: 6,
