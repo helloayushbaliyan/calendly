@@ -48,19 +48,11 @@ const SignUp = () => {
     <View className="flex-1 bg-[#F5F7FB]">
       <View className="absolute top-0 h-[45%] w-full rounded-b-[40px] bg-[#4F46E5]">
         <SafeAreaView edges={["top"]} className="flex-1">
-          <View className="px-6 pt-4 relative">
-            <TouchableOpacity
-              onPress={() => route.back()}
-              className="h-10 w-10 items-center justify-center rounded-full bg-white/20"
-            >
-              <Feather name="arrow-left" size={20} color="white" />
-            </TouchableOpacity>
-          </View>
-          <View className="mt-4 items-center justify-center">
-            <Text className="text-[32px] font-bold text-white">
+          <View className="mt-16 items-center justify-center">
+            <Text className="text-[40px] font-bold text-white">
               Create Account
             </Text>
-            <Text className="mt-2 text-[15px] font-medium text-indigo-100">
+            <Text className="mt-2 text-[17px] font-medium text-indigo-100">
               Join Scedly today.
             </Text>
           </View>
@@ -172,6 +164,17 @@ const SignUp = () => {
             </Text>
           </View>
         </ScrollView>
+      </SafeAreaView>
+
+      <SafeAreaView edges={["top"]} className="absolute top-0 w-full" pointerEvents="box-none">
+        <View className="px-6 pt-4" pointerEvents="box-none">
+          <TouchableOpacity
+            onPress={() => route.push("/signin")}
+            className="h-10 w-10 items-center justify-center rounded-full bg-white/20"
+          >
+            <Feather name="arrow-left" size={20} color="white" />
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </View>
   );

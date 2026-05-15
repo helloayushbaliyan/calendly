@@ -109,7 +109,7 @@ const index = () => {
                     Remember me
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => route.push("/forgot-password")}>
                   <Text className="text-[14px] font-medium text-[#4F46E5]">
                     Forgot password?
                   </Text>
