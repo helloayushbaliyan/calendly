@@ -1,4 +1,6 @@
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
   Image,
   ScrollView,
@@ -10,96 +12,154 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import logo from "../../assets/images/logo.png";
+
 const index = () => {
   const route = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FB]">
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="mx-6 my-10 flex-1 rounded-[40px] bg-white px-6 py-8">
-          <View className="mb-10 w-full">
-            <Image className="h-[40px] w-[40%] object-contain" source={logo} />
+    <View className="flex-1 bg-[#F5F7FB]">
+      <View className="absolute top-0 h-[40%] w-full rounded-b-[40px] bg-[#4F46E5]">
+        <SafeAreaView edges={["top"]} className="flex-1 mt-6">
+          <View className="mb-8 flex-1 items-center justify-center">
+            <Image
+              source={logo}
+              className="h-[130px] w-[250px]"
+              resizeMode="contain"
+            />
           </View>
+        </SafeAreaView>
+      </View>
 
-          <View className="mb-10">
-            <Text className="text-left text-[35px] font-bold text-[#1F2937]">
-              Welcome Back
+      <SafeAreaView edges={["bottom"]} className="flex-1">
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingTop: 270,
+            paddingBottom: 20,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* <View className="mb-8 flex-1 items-center justify-center">
+            <Image
+              source={logo}
+              className="h-[130px] w-[250px]"
+              resizeMode="contain"
+            />
+          </View> */}
+          <View className="mx-5 rounded-[30px] border border-gray-100 bg-white p-6 shadow-sm">
+            <Text className="mt-2 text-[26px] font-bold text-slate-900">
+              Welcome back
             </Text>
-            <Text className="mt-4 text-left text-[20px] leading-7 text-[#6B7280]">
-              Sign in to manage your temporal workspace.
+            <Text className="mt-2 text-[15px] text-slate-500">
+              Sign in to continue to Scedly
             </Text>
-          </View>
 
-          <View>
-            <View className="mb-6">
-              <Text className="text-left text-[20px] font-bold text-[#374151]">
+            <View className="mt-8">
+              <Text className="mb-2 text-[14px] font-medium text-slate-700">
                 Email Address
               </Text>
-              <TextInput
-                className="mt-3 rounded-2xl border border-[#D7DEE8] bg-[#EEF2F7] px-4 py-4 text-[17px] text-[#111827]"
-                placeholder="Email Address"
-                placeholderTextColor="#94A3B8"
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
-
-            <View className="mb-6">
-              <View className="flex-row items-center justify-between">
-                <Text className="text-left text-[20px] font-bold text-[#374151]">
-                  Password
-                </Text>
-                <Text className="text-left text-[15px] font-bold text-[#007AFF]">
-                  Forgot Password?
-                </Text>
+              <View className="flex-row items-center rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5">
+                <Feather name="mail" size={20} color="#94A3B8" />
+                <TextInput
+                  className="ml-3 flex-1 text-[16px] text-slate-900"
+                  placeholder="name@example.com"
+                  placeholderTextColor="#94A3B8"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
               </View>
-              <TextInput
-                className="mt-3 rounded-2xl border border-[#D7DEE8] bg-[#EEF2F7] px-4 py-4 text-[17px] text-[#111827]"
-                placeholder="Password"
-                placeholderTextColor="#94A3B8"
-                secureTextEntry
-                keyboardType="default"
-              />
-            </View>
 
-            <TouchableOpacity
-              activeOpacity={0.85}
-              className="mt-6 w-full items-center justify-center rounded-2xl bg-[#007AFF] px-6 py-5"
-              onPress={() => route.push("/home")}
-            >
-              <Text className="text-xl font-bold text-white">Sign In</Text>
-            </TouchableOpacity>
+              <Text className="mb-2 mt-6 text-[14px] font-medium text-slate-700">
+                Password
+              </Text>
+              <View className="flex-row items-center rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5">
+                <Feather name="lock" size={20} color="#94A3B8" />
+                <TextInput
+                  className="ml-3 flex-1 text-[16px] text-slate-900"
+                  placeholder="••••••••"
+                  placeholderTextColor="#94A3B8"
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <Feather
+                    name={showPassword ? "eye" : "eye-off"}
+                    size={20}
+                    color="#94A3B8"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View className="mt-6 flex-row items-center justify-between">
+                <TouchableOpacity
+                  className="flex-row items-center"
+                  onPress={() => setRememberMe(!rememberMe)}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name={rememberMe ? "checkbox" : "square-outline"}
+                    size={22}
+                    color={rememberMe ? "#4F46E5" : "#94A3B8"}
+                  />
+                  <Text className="ml-2 text-[14px] text-slate-600">
+                    Remember me
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Text className="text-[14px] font-medium text-[#4F46E5]">
+                    Forgot password?
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity
+                activeOpacity={0.85}
+                className="mt-8 w-full items-center justify-center rounded-xl bg-[#4F46E5] py-4 shadow-sm shadow-indigo-500/30"
+                onPress={() => route.push("/home")}
+              >
+                <Text className="text-[16px] font-bold text-white">Log in</Text>
+              </TouchableOpacity>
+
+              <View className="my-6 flex-row items-center">
+                <View className="h-[1px] flex-1 bg-gray-200" />
+                <Text className="mx-4 text-[13px] font-medium text-gray-400">
+                  Or continue with
+                </Text>
+                <View className="h-[1px] flex-1 bg-gray-200" />
+              </View>
+
+              <TouchableOpacity
+                activeOpacity={0.85}
+                className="w-full flex-row items-center justify-center rounded-xl border border-gray-200 bg-white py-3.5"
+              >
+                <Text className="mr-2 text-[20px] font-bold text-[#EA4335]">
+                  G
+                </Text>
+                <Text className="text-[15px] font-semibold text-slate-700">
+                  Google
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
-          <Text className="my-6 text-center text-[15px] font-bold text-[#9CA3AF]">
-            or
-          </Text>
-
-          <TouchableOpacity
-            activeOpacity={0.85}
-            className=" w-full flex-row items-center justify-center rounded-2xl border border-[#D7DEE8] bg-[#EEF2F7] px-6 py-5"
-          >
-            <Text className="mr-2 text-[18px] font-bold text-[#EA4335]">G</Text>
-            <Text className="text-[18px] font-bold text-[#374151]">
-              Continue with Google
-            </Text>
-          </TouchableOpacity>
-          <View>
-            <Text className="mt-6 text-center text-[15px] font-bold text-[#9CA3AF]">
+          <View className="mb-4 mt-8">
+            <Text className="text-center text-[14px] text-slate-500">
               Don't have an account?{" "}
               <Text
-                className="text-[15px] font-bold text-[#007AFF]"
+                className="font-bold text-[#4F46E5]"
                 onPress={() => route.push("/signup")}
               >
-                Create Account
+                Create account
               </Text>
             </Text>
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 };
 

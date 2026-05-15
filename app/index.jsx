@@ -37,7 +37,7 @@ const index = () => {
             </Text>
           </View>
           <TouchableOpacity
-            className="bg-[#007AFF] rounded-2xl py-5 px-6 mt-6 w-full flex justify-center items-center"
+            className="bg-[#554ce6] rounded-2xl py-5 px-6 mt-6 w-full flex justify-center items-center"
             onPress={() => route.push("/signin")}
           >
             <Text className="text-white font-bold text-xl">Get Started</Text>
