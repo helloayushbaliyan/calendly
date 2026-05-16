@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import logo from "../assets/images/logo.png";
+import logo from "../assets/images/launch-screen-logo.png";
 import splashImage from "../assets/images/splash-screen-image.png";
 const index = () => {
   const route = useRouter();

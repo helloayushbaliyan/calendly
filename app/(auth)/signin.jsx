@@ -3,7 +3,8 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Image,
-  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -20,34 +21,25 @@ const index = () => {
 
   return (
     <View className="flex-1 bg-[#F5F7FB]">
-      <View className="absolute top-0 h-[40%] w-full rounded-b-[40px] bg-[#4F46E5]">
-        <SafeAreaView edges={["top"]} className="flex-1 mt-6">
-          <View className="mb-8 flex-1 items-center justify-center">
-            <Image
-              source={logo}
-              className="h-[130px] w-[250px]"
-              resizeMode="contain"
-            />
+      <View className="absolute top-0 h-[45%] w-full rounded-b-[40px] bg-[#4F46E5]">
+        <SafeAreaView edges={["top"]} className="flex-1">
+          <View className="mt-16 items-center justify-center">
+            <View className="flex-1 items-center justify-top">
+              <Image
+                source={logo}
+                className="h-[130px] w-[250px]"
+                resizeMode="contain"
+              />
+            </View>
           </View>
         </SafeAreaView>
       </View>
 
-      <SafeAreaView edges={["bottom"]} className="flex-1">
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingTop: 270,
-            paddingBottom: 20,
-          }}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* <View className="mb-8 flex-1 items-center justify-center">
-            <Image
-              source={logo}
-              className="h-[130px] w-[250px]"
-              resizeMode="contain"
-            />
-          </View> */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <SafeAreaView edges={["bottom"]} className="flex-1 justify-end pb-4">
           <View className="mx-5 rounded-[30px] border border-gray-100 bg-white p-6 shadow-sm">
             <Text className="mt-2 text-[26px] font-bold text-slate-900">
               Welcome back
@@ -56,7 +48,7 @@ const index = () => {
               Sign in to continue to Scedly
             </Text>
 
-            <View className="mt-8">
+            <View className="mt-6">
               <Text className="mb-2 text-[14px] font-medium text-slate-700">
                 Email Address
               </Text>
@@ -71,7 +63,7 @@ const index = () => {
                 />
               </View>
 
-              <Text className="mb-2 mt-6 text-[14px] font-medium text-slate-700">
+              <Text className="mb-2 mt-4 text-[14px] font-medium text-slate-700">
                 Password
               </Text>
               <View className="flex-row items-center rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5">
@@ -94,7 +86,7 @@ const index = () => {
                 </TouchableOpacity>
               </View>
 
-              <View className="mt-6 flex-row items-center justify-between">
+              <View className="mt-4 flex-row items-center justify-between">
                 <TouchableOpacity
                   className="flex-row items-center"
                   onPress={() => setRememberMe(!rememberMe)}
@@ -109,7 +101,9 @@ const index = () => {
                     Remember me
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => route.push("/forgot-password")}>
+                <TouchableOpacity
+                  onPress={() => route.push("/forgot-password")}
+                >
                   <Text className="text-[14px] font-medium text-[#4F46E5]">
                     Forgot password?
                   </Text>
@@ -118,13 +112,13 @@ const index = () => {
 
               <TouchableOpacity
                 activeOpacity={0.85}
-                className="mt-8 w-full items-center justify-center rounded-xl bg-[#4F46E5] py-4 shadow-sm shadow-indigo-500/30"
+                className="mt-6 w-full items-center justify-center rounded-xl bg-[#4F46E5] py-3.5 shadow-sm shadow-indigo-500/30"
                 onPress={() => route.push("/home")}
               >
                 <Text className="text-[16px] font-bold text-white">Log in</Text>
               </TouchableOpacity>
 
-              <View className="my-6 flex-row items-center">
+              <View className="my-4 flex-row items-center">
                 <View className="h-[1px] flex-1 bg-gray-200" />
                 <Text className="mx-4 text-[13px] font-medium text-gray-400">
                   Or continue with
@@ -146,7 +140,7 @@ const index = () => {
             </View>
           </View>
 
-          <View className="mb-4 mt-8">
+          <View className="mb-2 mt-6">
             <Text className="text-center text-[14px] text-slate-500">
               Don't have an account?{" "}
               <Text
@@ -157,8 +151,8 @@ const index = () => {
               </Text>
             </Text>
           </View>
-        </ScrollView>
-      </SafeAreaView>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </View>
   );
 };
