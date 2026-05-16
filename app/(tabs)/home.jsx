@@ -1,251 +1,228 @@
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const Home = () => {
   const route = useRouter();
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
+    <View className="flex-1 bg-[#F5F7FB]">
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <View className="flex-row justify-between items-center px-6 pt-4">
-          <View className="flex-row items-center">
-            <Image
-              source={{ uri: "https://i.pravatar.cc/150?img=11" }}
-              className="w-10 h-10 rounded-full bg-gray-300"
-            />
-          </View>
-          <TouchableOpacity className="w-10 h-10 bg-white rounded-full items-center justify-center border border-gray-100 shadow-sm">
-            <Ionicons name="notifications-outline" size={20} color="#1F2937" />
-            <View className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white" />
-          </TouchableOpacity>
-        </View>
-
-        {/* Greeting */}
-        <View className="px-6 mt-8">
-          <Text className="text-[40px] font-bold text-gray-900 leading-tight">
-            Good Morning,{"\n"}Ayush
-          </Text>
-          <Text className="text-gray-500 mt-2 text-base">
-            You have 2 meetings scheduled for today.
-          </Text>
-        </View>
-
-        {/* Stats Row */}
-        <View className="flex-row px-6 mt-8 gap-4">
-          {/* Total Meetings */}
-          <View className="flex-1 bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
-            <View className="flex-row justify-between items-start mb-4">
-              <View className="w-10 h-10 rounded-full bg-blue-50 items-center justify-center">
-                <Ionicons name="calendar-outline" size={20} color="#2563EB" />
-              </View>
-              <View className="bg-green-100 px-2.5 py-1 rounded-full">
-                <Text className="text-green-700 text-[10px] font-bold">
-                  +12%
+        {/* Purple Header */}
+        <View className="bg-[#4F46E5] rounded-b-[40px] px-6 pt-16 pb-8">
+          {/* User & Bell */}
+          <View className="flex-row justify-between items-center">
+            <View className="flex-row items-center">
+              <Image
+                source={{ uri: "https://i.pravatar.cc/150?img=11" }}
+                className="w-12 h-12 rounded-full border-2 border-white/20"
+              />
+              <View className="ml-3">
+                <Text className="text-indigo-100 text-[13px] font-medium">
+                  Good morning,
+                </Text>
+                <Text className="text-white text-[18px] font-bold">
+                  Sarah Jenkins
                 </Text>
               </View>
             </View>
-            <Text className="text-gray-400 text-xs font-bold tracking-wider mb-1">
-              TOTAL MEETINGS
-            </Text>
-            <Text className="text-3xl font-bold text-gray-900">24</Text>
-          </View>
-
-          {/* Upcoming */}
-          <View className="flex-1 bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
-            <View className="flex-row justify-between items-start mb-4">
-              <View className="w-10 h-10 rounded-full bg-purple-50 items-center justify-center">
-                <MaterialCommunityIcons
-                  name="video-outline"
-                  size={22}
-                  color="#9333EA"
-                />
-              </View>
-            </View>
-            <Text className="text-gray-400 text-xs font-bold tracking-wider mb-1">
-              UPCOMING
-            </Text>
-            <Text className="text-3xl font-bold text-gray-900">5</Text>
-          </View>
-        </View>
-
-        {/* Quick Actions */}
-        <View className="px-6 mt-6">
-          <View className="bg-blue-600 rounded-3xl p-6 shadow-md shadow-blue-600/30">
-            <Text className="text-white text-lg font-semibold mb-4">
-              Quick Actions
-            </Text>
-            <View className="flex-row gap-3">
-              <TouchableOpacity className="flex-1 bg-white flex-row items-center justify-center py-3.5 rounded-xl">
-                <Ionicons name="add-circle" size={18} color="#2563EB" />
-                <Text className="ml-2 font-bold text-blue-600 text-sm">
-                  Create Event
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity className="flex-1 bg-blue-500 flex-row items-center justify-center py-3.5 rounded-xl border border-blue-400">
-                <Ionicons name="share-social" size={18} color="#FFFFFF" />
-                <Text className="ml-2 font-bold text-white text-sm">
-                  Share Link
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-
-        {/* Today's Schedule */}
-        <View className="px-6 mt-8">
-          <View className="flex-row justify-between items-end mb-5">
-            <Text className="text-[26px] leading-[30px] font-bold text-gray-900">
-              Today's{"\n"}Schedule
-            </Text>
-            <TouchableOpacity className="flex-row items-center mb-1">
-              <Text className="text-blue-600 font-semibold text-sm mr-1">
-                View Calendar
-              </Text>
-              <Ionicons name="chevron-forward" size={14} color="#2563EB" />
+            <TouchableOpacity className="w-10 h-10 bg-white/10 rounded-full items-center justify-center">
+              <Feather name="bell" size={20} color="#FFFFFF" />
+              <View className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#4F46E5]" />
             </TouchableOpacity>
           </View>
 
-          {/* Schedule Items */}
-          <View className="space-y-5">
-            {/* Item 1 */}
-            <View className="flex-row items-start mt-2">
-              <View className="w-[52px] items-center pt-2">
-                <Text className="text-base font-bold text-gray-900">10:00</Text>
-                <Text className="text-[10px] text-gray-500 font-bold mt-0.5">
-                  AM
+          {/* Stats Cards */}
+          <View className="flex-row mt-8 gap-4">
+            {/* Today */}
+            <View className="flex-1 bg-white rounded-2xl p-4 shadow-sm">
+              <View className="flex-row items-center mb-2">
+                <Feather name="calendar" size={14} color="#6366F1" />
+                <Text className="ml-1.5 text-gray-500 text-[11px] font-bold tracking-wider">
+                  TODAY
                 </Text>
               </View>
-              <View className="flex-1 bg-white rounded-3xl p-4 shadow-sm border border-gray-100 ml-3">
-                <View className="flex-row justify-between items-start">
-                  <View className="flex-row items-center flex-1">
-                    <Image
-                      source={{ uri: "https://i.pravatar.cc/150?img=12" }}
-                      className="w-11 h-11 rounded-full bg-gray-200"
-                    />
-                    <View className="ml-3 flex-1">
-                      <Text className="text-base font-bold text-gray-900">
-                        Client Meeting
-                      </Text>
-                      <Text className="text-xs text-gray-500 font-medium mt-0.5">
-                        Rahul Sharma • 45 min session
-                      </Text>
-                    </View>
-                  </View>
-                  <TouchableOpacity className="w-8 h-8 bg-gray-50 rounded-full items-center justify-center">
-                    <Ionicons
-                      name="ellipsis-vertical"
-                      size={16}
-                      color="#6B7280"
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View className="mt-4 flex-row">
-                  <View className="bg-purple-50 px-3 py-1.5 rounded-full flex-row items-center border border-purple-100">
-                    <Ionicons name="videocam" size={12} color="#9333EA" />
-                    <Text className="text-purple-700 text-[11px] font-bold ml-1.5">
-                      Zoom Meeting
-                    </Text>
-                  </View>
-                </View>
+              <View className="flex-row items-end">
+                <Text className="text-[28px] font-bold text-gray-900 leading-none">
+                  4
+                </Text>
+                <Text className="text-gray-400 text-[13px] font-medium ml-2 mb-1">
+                  Meetings
+                </Text>
               </View>
             </View>
-            {/* Item 2 */}
-            <View className="flex-row items-start mt-5">
-              <View className="w-[52px] items-center pt-2">
-                <Text className="text-base font-bold text-gray-900">02:00</Text>
-                <Text className="text-[10px] text-gray-500 font-bold mt-0.5">
-                  PM
+
+            {/* Total */}
+            <View className="flex-1 bg-white rounded-2xl p-4 shadow-sm">
+              <View className="flex-row items-center mb-2">
+                <Feather name="bar-chart-2" size={14} color="#6366F1" />
+                <Text className="ml-1.5 text-gray-500 text-[11px] font-bold tracking-wider">
+                  TOTAL
                 </Text>
               </View>
-              <View className="flex-1 bg-white rounded-3xl p-4 shadow-sm border-l-[6px] border-l-blue-500 ml-3">
-                <View className="flex-row justify-between items-start">
-                  <View className="flex-row items-center flex-1">
-                    <View className="w-11 h-11 rounded-full bg-blue-50 items-center justify-center">
-                      <Ionicons name="people" size={20} color="#2563EB" />
-                    </View>
-                    <View className="ml-3 flex-1">
-                      <Text className="text-base font-bold text-gray-900">
-                        Project Discussion
-                      </Text>
-                      <Text className="text-xs text-gray-500 font-medium mt-0.5">
-                        MeetEase UI Redesign • Internal Team
-                      </Text>
-                    </View>
+              <View className="flex-row items-end">
+                <Text className="text-[28px] font-bold text-gray-900 leading-none">
+                  28
+                </Text>
+                <Text className="text-gray-400 text-[13px] font-medium ml-2 mb-1">
+                  Bookings
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Upcoming Today */}
+        <View className="px-6 mt-8">
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-[18px] font-bold text-gray-900">
+              Upcoming Today
+            </Text>
+            <TouchableOpacity>
+              <Text className="text-[#4F46E5] text-[13px] font-medium">
+                See all
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View className="grid grid-cols-1 gap-4">
+            {/* Card 1 */}
+            <View className="bg-white rounded-3xl p-5 shadow-sm border-l-[4px] border-l-[#4F46E5]">
+              <View className="flex-row justify-between items-center mb-3">
+                <Text className="text-[#4F46E5] text-[12px] font-bold">
+                  10:00 AM - 10:30 AM
+                </Text>
+                <View className="bg-indigo-50 px-2.5 py-1 rounded-full">
+                  <Text className="text-[#4F46E5] text-[11px] font-medium">
+                    Google Meet
+                  </Text>
+                </View>
+              </View>
+              <Text className="text-[16px] font-bold text-gray-900 mb-4">
+                Product Demo Call
+              </Text>
+              <View className="flex-row justify-between items-center">
+                <View className="flex-row items-center">
+                  <Image
+                    source={{ uri: "https://i.pravatar.cc/150?img=12" }}
+                    className="w-8 h-8 rounded-full bg-gray-200"
+                  />
+                  <View className="ml-3">
+                    <Text className="text-gray-900 text-[13px] font-bold">
+                      Alex Thompson
+                    </Text>
+                    <Text className="text-gray-400 text-[11px]">Acme Corp</Text>
                   </View>
                 </View>
-                {/* avatars row */}
-                <View className="mt-4 flex-row items-center">
-                  <View className="flex-row">
-                    <Image
-                      source={{ uri: "https://i.pravatar.cc/150?img=6" }}
-                      className="w-7 h-7 rounded-full border-[2px] border-white z-30"
-                    />
-                    <Image
-                      source={{ uri: "https://i.pravatar.cc/150?img=8" }}
-                      className="w-7 h-7 rounded-full border-[2px] border-white -ml-2 z-20"
-                    />
-                    <Image
-                      source={{ uri: "https://i.pravatar.cc/150?img=9" }}
-                      className="w-7 h-7 rounded-full border-[2px] border-white -ml-2 z-10"
-                    />
+                <TouchableOpacity className="w-8 h-8 bg-gray-50 rounded-full items-center justify-center">
+                  <Feather name="more-horizontal" size={16} color="#9CA3AF" />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Card 2 */}
+            <View className="bg-white rounded-3xl p-5 shadow-sm border-l-[4px] border-l-gray-400">
+              <View className="flex-row justify-between items-center mb-3">
+                <Text className="text-gray-500 text-[12px] font-bold">
+                  1:00 PM - 2:00 PM
+                </Text>
+                <View className="bg-gray-100 px-2.5 py-1 rounded-full">
+                  <Text className="text-gray-600 text-[11px] font-medium">
+                    Zoom
+                  </Text>
+                </View>
+              </View>
+              <Text className="text-[16px] font-bold text-gray-900 mb-4">
+                Quarterly Review
+              </Text>
+              <View className="flex-row justify-between items-center">
+                <View className="flex-row items-center">
+                  <Image
+                    source={{ uri: "https://i.pravatar.cc/150?img=33" }}
+                    className="w-8 h-8 rounded-full bg-gray-200"
+                  />
+                  <View className="ml-3">
+                    <Text className="text-gray-900 text-[13px] font-bold">
+                      David Chen
+                    </Text>
+                    <Text className="text-gray-400 text-[11px]">TechFlow</Text>
                   </View>
-                  <View className="w-7 h-7 rounded-full bg-gray-100 border-[2px] border-white -ml-2 items-center justify-center z-0">
-                    <Text className="text-[10px] font-bold text-gray-600">
+                </View>
+                <TouchableOpacity className="w-8 h-8 bg-gray-50 rounded-full items-center justify-center">
+                  <Feather name="more-horizontal" size={16} color="#9CA3AF" />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Card 3 */}
+            <View className="bg-white rounded-3xl p-5 shadow-sm border-l-[4px] border-l-gray-400">
+              <View className="flex-row justify-between items-center mb-3">
+                <Text className="text-gray-500 text-[12px] font-bold">
+                  3:30 PM - 4:00 PM
+                </Text>
+                <View className="bg-gray-100 px-2.5 py-1 rounded-full">
+                  <Text className="text-gray-600 text-[11px] font-medium">
+                    Teams
+                  </Text>
+                </View>
+              </View>
+              <Text className="text-[16px] font-bold text-gray-900 mb-4">
+                Sync with Design Team
+              </Text>
+              <View className="flex-row justify-between items-center">
+                <View className="flex-row items-center">
+                  <Image
+                    source={{ uri: "https://i.pravatar.cc/150?img=44" }}
+                    className="w-8 h-8 rounded-full bg-gray-200 z-20 border-2 border-white"
+                  />
+                  <Image
+                    source={{ uri: "https://i.pravatar.cc/150?img=45" }}
+                    className="w-8 h-8 rounded-full bg-gray-200 -ml-3 z-10 border-2 border-white"
+                  />
+                  <View className="w-8 h-8 rounded-full bg-gray-100 -ml-3 z-0 border-2 border-white items-center justify-center">
+                    <Text className="text-[10px] font-bold text-gray-500">
                       +2
                     </Text>
                   </View>
                 </View>
+                <TouchableOpacity className="w-8 h-8 bg-gray-50 rounded-full items-center justify-center">
+                  <Feather name="more-horizontal" size={16} color="#9CA3AF" />
+                </TouchableOpacity>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Recent Activity */}
-        <View className="px-6 mt-10 mb-6">
-          <Text className="text-lg font-bold text-gray-900 mb-4">
-            Recent Activity
+        {/* Quick Actions */}
+        <View className="px-6 mt-8 mb-8">
+          <Text className="text-[18px] font-bold text-gray-900 mb-4">
+            Quick Actions
           </Text>
+          <View className="flex-row gap-4">
+            <TouchableOpacity className="flex-1 bg-white rounded-3xl py-6 items-center shadow-sm">
+              <View className="w-12 h-12 bg-indigo-50 rounded-full items-center justify-center mb-3">
+                <Feather name="link" size={20} color="#4F46E5" />
+              </View>
+              <Text className="text-[14px] font-bold text-gray-900">
+                Copy Link
+              </Text>
+            </TouchableOpacity>
 
-          <View className="bg-white rounded-3xl p-2 shadow-sm border border-gray-100">
-            <View className="flex-row items-center p-3">
-              <View className="w-10 h-10 rounded-full bg-green-50 items-center justify-center">
-                <Ionicons name="checkmark-circle" size={20} color="#16A34A" />
+            <TouchableOpacity className="flex-1 bg-white rounded-3xl py-6 items-center shadow-sm">
+              <View className="w-12 h-12 bg-indigo-50 rounded-full items-center justify-center mb-3">
+                <Feather name="calendar" size={20} color="#4F46E5" />
               </View>
-              <View className="ml-3 flex-1">
-                <Text className="text-sm font-bold text-gray-900">
-                  Completed: Quarterly Review
-                </Text>
-                <Text className="text-[11px] text-gray-500 mt-0.5">
-                  2 hours ago
-                </Text>
-              </View>
-            </View>
-
-            <View className="h-[1px] bg-gray-50 mx-4" />
-
-            <View className="flex-row items-center p-3">
-              <View className="w-10 h-10 rounded-full bg-blue-50 items-center justify-center">
-                <Ionicons name="person-add" size={18} color="#2563EB" />
-              </View>
-              <View className="ml-3 flex-1">
-                <Text className="text-sm font-bold text-gray-900">
-                  New Client Registered
-                </Text>
-                <Text className="text-[11px] text-gray-500 mt-0.5">
-                  5 hours ago
-                </Text>
-              </View>
-            </View>
+              <Text className="text-[14px] font-bold text-gray-900">
+                Availability
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
