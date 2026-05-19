@@ -1,88 +1,108 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Entypo } from "@expo/vector-icons";
+// 1. Change this to a wildcard import as recommended by Expo
+import * as NavigationBar from "expo-navigation-bar";
 import { Tabs } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react"; // Add this hook
+
 import "../../global.css";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const visibility = NavigationBar.useVisibility();
+
+  // 2. Set the navigation bar styling imperatively instead of using JSX
+  useEffect(() => {
+    // Sets the navigation bar icons to dark or light manually
+    NavigationBar.setStyle("dark");
+  }, []);
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: "#1D4ED8",
-        tabBarInactiveTintColor: "#94A3B8",
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "600",
-          marginTop: 4,
-        },
-        tabBarItemStyle: {
-          marginVertical: 16,
-          borderRadius: 17,
-          overflow: "hidden",
-        },
-        tabBarActiveBackgroundColor: "#eee7fc",
-        tabBarStyle: {
-          backgroundColor:
-            colorScheme === "dark" ? Colors[colorScheme].background : "#F8FAFC",
-          height: 100,
-          borderRadius: 17,
-          paddingHorizontal: 12,
-          paddingBottom: 6,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="home"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <Entypo name="home" size={24} color={color} />
-          ),
-        }}
-      />
+    <>
+      <StatusBar style="light" />
+      {/* 3. REMOVED: <NavigationBar style="dark" /> is gone from here */}
 
-      <Tabs.Screen
-        name="calender"
-        options={{
-          title: "Calendar",
-          tabBarIcon: ({ color }) => (
-            <Entypo name="calendar" size={24} color={color} />
-          ),
-        }}
-      />
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: "#1D4ED8",
+          tabBarInactiveTintColor: "#94A3B8",
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: "600",
+            marginTop: 4,
+          },
+          tabBarItemStyle: {
+            marginVertical: 16,
+            borderRadius: 17,
+            overflow: "hidden",
+          },
+          tabBarActiveBackgroundColor: "#eee7fc",
 
-      <Tabs.Screen
-        name="bookings"
-        options={{
-          title: "Bookings",
-          tabBarIcon: ({ color }) => (
-            <Entypo name="briefcase" size={24} color={color} />
-          ),
+          tabBarStyle: {
+            backgroundColor:
+              colorScheme === "dark"
+                ? Colors[colorScheme].background
+                : "#F8FAFC",
+            height: 100,
+            borderRadius: 17,
+            paddingHorizontal: 12,
+            paddingBottom: 6,
+          },
         }}
-      />
+      >
+        <Tabs.Screen
+          name="home"
+          options={{
+            title: "Home",
+            tabBarIcon: ({ color }) => (
+              <Entypo name="home" size={24} color={color} />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="alert"
-        options={{
-          title: "Alerts",
-          tabBarIcon: ({ color }) => (
-            <Entypo name="bell" size={24} color={color} />
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="calender"
+          options={{
+            title: "Calendar",
+            tabBarIcon: ({ color }) => (
+              <Entypo name="briefcase" size={24} color={color} />
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          tabBarIcon: ({ color }) => (
-            <Entypo name="cog" size={24} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+        <Tabs.Screen
+          name="quickActions"
+          options={{
+            title: "Bookings",
+            tabBarIcon: ({ color }) => (
+              <Entypo name="plus" size={24} color={color} />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="contacts"
+          options={{
+            title: "=Contacts",
+            tabBarIcon: ({ color }) => (
+              <Entypo name="users" size={24} color={color} />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="alert"
+          options={{
+            title: "Alert",
+            tabBarIcon: ({ color }) => (
+              <Entypo name="bell" size={24} color={color} />
+            ),
+          }}
+        />
+      </Tabs>
+    </>
   );
 }

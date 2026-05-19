@@ -7,74 +7,74 @@ const Home = () => {
 
   return (
     <View className="flex-1 bg-[#F5F7FB]">
+      {/* Purple Header */}
+      <View className="bg-[#4F46E5] rounded-b-[40px] px-6 pt-16 pb-8">
+        {/* User & Bell */}
+        <View className="flex-row justify-between items-center">
+          <View className="flex-row items-center">
+            <Image
+              source={{ uri: "https://i.pravatar.cc/150?img=11" }}
+              className="w-12 h-12 rounded-full border-2 border-white/20"
+            />
+            <View className="ml-3">
+              <Text className="text-indigo-100 text-[13px] font-medium">
+                Good morning,
+              </Text>
+              <Text className="text-white text-[18px] font-bold">
+                Sarah Jenkins
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity className="w-10 h-10 bg-white/10 rounded-full items-center justify-center">
+            <Feather name="bell" size={20} color="#FFFFFF" />
+            <View className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#4F46E5]" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Stats Cards */}
+        <View className="flex-row mt-8 gap-4">
+          {/* Today */}
+          <View className="flex-1 bg-white rounded-2xl p-4 shadow-sm">
+            <View className="flex-row items-center mb-2">
+              <Feather name="calendar" size={14} color="#6366F1" />
+              <Text className="ml-1.5 text-gray-500 text-[11px] font-bold tracking-wider">
+                TODAY
+              </Text>
+            </View>
+            <View className="flex-row items-end">
+              <Text className="text-[28px] font-bold text-gray-900 leading-none">
+                4
+              </Text>
+              <Text className="text-gray-400 text-[13px] font-medium ml-2 mb-1">
+                Meetings
+              </Text>
+            </View>
+          </View>
+
+          {/* Total */}
+          <View className="flex-1 bg-white rounded-2xl p-4 shadow-sm">
+            <View className="flex-row items-center mb-2">
+              <Feather name="bar-chart-2" size={14} color="#6366F1" />
+              <Text className="ml-1.5 text-gray-500 text-[11px] font-bold tracking-wider">
+                TOTAL
+              </Text>
+            </View>
+            <View className="flex-row items-end">
+              <Text className="text-[28px] font-bold text-gray-900 leading-none">
+                28
+              </Text>
+              <Text className="text-gray-400 text-[13px] font-medium ml-2 mb-1">
+                Bookings
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Purple Header */}
-        <View className="bg-[#4F46E5] rounded-b-[40px] px-6 pt-16 pb-8">
-          {/* User & Bell */}
-          <View className="flex-row justify-between items-center">
-            <View className="flex-row items-center">
-              <Image
-                source={{ uri: "https://i.pravatar.cc/150?img=11" }}
-                className="w-12 h-12 rounded-full border-2 border-white/20"
-              />
-              <View className="ml-3">
-                <Text className="text-indigo-100 text-[13px] font-medium">
-                  Good morning,
-                </Text>
-                <Text className="text-white text-[18px] font-bold">
-                  Sarah Jenkins
-                </Text>
-              </View>
-            </View>
-            <TouchableOpacity className="w-10 h-10 bg-white/10 rounded-full items-center justify-center">
-              <Feather name="bell" size={20} color="#FFFFFF" />
-              <View className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#4F46E5]" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Stats Cards */}
-          <View className="flex-row mt-8 gap-4">
-            {/* Today */}
-            <View className="flex-1 bg-white rounded-2xl p-4 shadow-sm">
-              <View className="flex-row items-center mb-2">
-                <Feather name="calendar" size={14} color="#6366F1" />
-                <Text className="ml-1.5 text-gray-500 text-[11px] font-bold tracking-wider">
-                  TODAY
-                </Text>
-              </View>
-              <View className="flex-row items-end">
-                <Text className="text-[28px] font-bold text-gray-900 leading-none">
-                  4
-                </Text>
-                <Text className="text-gray-400 text-[13px] font-medium ml-2 mb-1">
-                  Meetings
-                </Text>
-              </View>
-            </View>
-
-            {/* Total */}
-            <View className="flex-1 bg-white rounded-2xl p-4 shadow-sm">
-              <View className="flex-row items-center mb-2">
-                <Feather name="bar-chart-2" size={14} color="#6366F1" />
-                <Text className="ml-1.5 text-gray-500 text-[11px] font-bold tracking-wider">
-                  TOTAL
-                </Text>
-              </View>
-              <View className="flex-row items-end">
-                <Text className="text-[28px] font-bold text-gray-900 leading-none">
-                  28
-                </Text>
-                <Text className="text-gray-400 text-[13px] font-medium ml-2 mb-1">
-                  Bookings
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
         {/* Upcoming Today */}
         <View className="px-6 mt-8">
           <View className="flex-row justify-between items-center mb-4">
