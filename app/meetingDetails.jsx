@@ -79,6 +79,77 @@ export default function MeetingDetailsScreen() {
     );
   };
 
+  const handleViewContact = () => {
+    // Map known contacts
+    let contactParams = {
+      id: "99",
+      name: name,
+      email: "contact@" + name.toLowerCase().replace(/\s+/g, "") + ".com",
+      phone: "+91 98765 43210",
+      company: "Acme Partners",
+      role: "Professional Partner",
+      avatar: avatar,
+    };
+
+    const lowercaseName = name.toLowerCase();
+    if (lowercaseName.includes("ayush")) {
+      contactParams = {
+        id: 1,
+        name: "Ayush Baliyan",
+        email: "baliyan2809@gmail.com",
+        phone: "+91 99999 88888",
+        company: "Calendly Corp",
+        role: "Founder",
+        avatar: "https://i.pravatar.cc/150?img=11",
+      };
+    } else if (lowercaseName.includes("pawan")) {
+      contactParams = {
+        id: 2,
+        name: "Pawan Kumar",
+        email: "pawan.kumar@gmail.com",
+        phone: "+91 98765 43210",
+        company: "Acme Corp",
+        role: "Maths Teacher",
+        avatar: "https://i.pravatar.cc/150?img=12",
+      };
+    } else if (lowercaseName.includes("sarah")) {
+      contactParams = {
+        id: 3,
+        name: "Sarah Jenkins",
+        email: "sarah.j@techflow.io",
+        phone: "+1 (555) 123-4567",
+        company: "TechFlow",
+        role: "Product Manager",
+        avatar: "https://i.pravatar.cc/150?img=49",
+      };
+    } else if (lowercaseName.includes("michael")) {
+      contactParams = {
+        id: 4,
+        name: "Michael Chen",
+        email: "m.chen@designhub.co",
+        phone: "+1 (555) 765-4321",
+        company: "DesignHub",
+        role: "Creative Director",
+        avatar: "https://i.pravatar.cc/150?img=33",
+      };
+    } else if (lowercaseName.includes("elena")) {
+      contactParams = {
+        id: 5,
+        name: "Elena Rodriguez",
+        email: "elena.r@designco.com",
+        phone: "+1 (555) 321-7654",
+        company: "DesignCo",
+        role: "Lead UX Designer",
+        avatar: "https://i.pravatar.cc/150?img=47",
+      };
+    }
+
+    router.push({
+      pathname: "/contactDetails",
+      params: contactParams,
+    });
+  };
+
   return (
     <View className="flex-1 bg-[#F8FAFC]">
       {/* Premium Indigo Header - Matched with other screens */}
@@ -120,11 +191,24 @@ export default function MeetingDetailsScreen() {
             Organizer
           </Text>
 
-          <View className="bg-emerald-50 px-4 py-1.5 rounded-full">
+          <View className="bg-emerald-50 px-4 py-1.5 rounded-full mb-2">
             <Text className="text-[11px] font-bold text-emerald-600 tracking-wider">
               {status}
             </Text>
           </View>
+
+          {/* View Contact Button */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={handleViewContact}
+            className="mt-3 flex-row items-center bg-indigo-50/70 active:bg-indigo-100 px-5 py-2.5 rounded-2xl"
+          >
+            <Feather name="user" size={14} color="#4F46E5" />
+            <Text className="text-[12px] font-bold text-[#4F46E5] ml-2">
+              View Contact Profile
+            </Text>
+            <Feather name="chevron-right" size={12} color="#4F46E5" className="ml-1" />
+          </TouchableOpacity>
         </View>
 
         {/* Meeting Information Section */}

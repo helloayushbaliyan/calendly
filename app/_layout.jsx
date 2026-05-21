@@ -25,6 +25,7 @@ export default function TabLayout() {
           <Stack.Screen name="createContact" />
           <Stack.Screen name="events" />
           <Stack.Screen name="meetingDetails" />
+          <Stack.Screen name="contactDetails" />
         </Stack>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>

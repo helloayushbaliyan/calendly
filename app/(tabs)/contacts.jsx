@@ -1,12 +1,46 @@
 import { Feather } from "@expo/vector-icons";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 const ContactsScreen = () => {
+  const router = useRouter();
+
   const contacts = [
     {
       id: 1,
       name: "Ayush Baliyan",
       email: "baliyan2809@gmail.com",
+      phone: "+91 99999 88888",
+      company: "Calendly Corp",
+      role: "Founder",
+      avatar: "https://i.pravatar.cc/150?img=11",
+    },
+    {
+      id: 2,
+      name: "Pawan Kumar",
+      email: "pawan.kumar@gmail.com",
+      phone: "+91 98765 43210",
+      company: "Acme Corp",
+      role: "Maths Teacher",
+      avatar: "https://i.pravatar.cc/150?img=12",
+    },
+    {
+      id: 3,
+      name: "Sarah Jenkins",
+      email: "sarah.j@techflow.io",
+      phone: "+1 (555) 123-4567",
+      company: "TechFlow",
+      role: "Product Manager",
+      avatar: "https://i.pravatar.cc/150?img=49",
+    },
+    {
+      id: 4,
+      name: "Michael Chen",
+      email: "m.chen@designhub.co",
+      phone: "+1 (555) 765-4321",
+      company: "DesignHub",
+      role: "Creative Director",
+      avatar: "https://i.pravatar.cc/150?img=33",
     },
   ];
 
@@ -35,8 +69,12 @@ const ContactsScreen = () => {
       <View className="bg-[#4F46E5] rounded-b-[40px] px-6 pt-16 pb-8 mb-6 shadow-md shadow-indigo-500/20">
         <View className="flex-row items-center justify-between">
           <Text className="text-[28px] font-bold text-white">Contacts</Text>
-          <TouchableOpacity className="w-10 h-10 bg-white/10 rounded-full items-center justify-center">
-            <Feather name="search" size={20} color="white" />
+          <TouchableOpacity 
+            activeOpacity={0.7}
+            onPress={() => router.push("/createContact")}
+            className="w-10 h-10 bg-white/10 rounded-full items-center justify-center"
+          >
+            <Feather name="plus" size={20} color="white" />
           </TouchableOpacity>
         </View>
       </View>
@@ -66,15 +104,36 @@ const ContactsScreen = () => {
                     <TouchableOpacity
                       key={contact.id}
                       activeOpacity={0.7}
+                      onPress={() =>
+                        router.push({
+                          pathname: "/contactDetails",
+                          params: {
+                            id: contact.id,
+                            name: contact.name,
+                            email: contact.email,
+                            phone: contact.phone,
+                            company: contact.company,
+                            role: contact.role,
+                            avatar: contact.avatar,
+                          },
+                        })
+                      }
                       className="bg-white rounded-[24px] p-4 shadow-sm border border-gray-50 flex-row items-center"
                     >
                       {/* Avatar */}
-                      <View className="w-12 h-12 rounded-full bg-gray-100 items-center justify-center">
-                        <Text className="text-[16px] font-bold text-gray-500">
-                          {getInitials(contact.name)}
-                        </Text>
-                      </View>
-                      
+                      {contact.avatar ? (
+                        <Image
+                          source={{ uri: contact.avatar }}
+                          className="w-12 h-12 rounded-full bg-slate-100"
+                        />
+                      ) : (
+                        <View className="w-12 h-12 rounded-full bg-gray-100 items-center justify-center">
+                          <Text className="text-[16px] font-bold text-gray-500">
+                            {getInitials(contact.name)}
+                          </Text>
+                        </View>
+                      )}
+
                       {/* Details */}
                       <View className="flex-1 ml-4">
                         <Text className="text-[17px] font-bold text-gray-900 mb-0.5">
@@ -84,6 +143,8 @@ const ContactsScreen = () => {
                           {contact.email}
                         </Text>
                       </View>
+
+                      <Feather name="chevron-right" size={16} color="#cbd5e1" />
                     </TouchableOpacity>
                   ))}
                 </View>

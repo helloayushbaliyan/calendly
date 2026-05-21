@@ -342,7 +342,20 @@ const Home = () => {
             <View className="flex-row gap-3">
               <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={() => route.push("/contacts")}
+                onPress={() =>
+                  route.push({
+                    pathname: "/contactDetails",
+                    params: {
+                      id: 2,
+                      name: "Pawan Kumar",
+                      email: "pawan.kumar@gmail.com",
+                      phone: "+91 98765 43210",
+                      company: "Acme Corp",
+                      role: "Maths Teacher",
+                      avatar: "https://i.pravatar.cc/150?img=12",
+                    },
+                  })
+                }
                 className="flex-1 bg-gray-50 border border-gray-100 py-3 rounded-[16px] items-center justify-center active:bg-gray-100"
               >
                 <Text className="text-[#4F46E5] font-bold text-[13px]">

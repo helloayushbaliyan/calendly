@@ -81,6 +81,78 @@ const CalenderScreen = () => {
     });
   }, []);
 
+  const handleViewContact = useCallback((name, avatar) => {
+    meetingDetailsSheetRef.current?.dismiss();
+    
+    let contactParams = {
+      id: "99",
+      name: name,
+      email: "contact@" + name.toLowerCase().replace(/\s+/g, "") + ".com",
+      phone: "+91 98765 43210",
+      company: "Acme Partners",
+      role: "Professional Partner",
+      avatar: avatar,
+    };
+
+    const lowercaseName = name.toLowerCase();
+    if (lowercaseName.includes("ayush")) {
+      contactParams = {
+        id: 1,
+        name: "Ayush Baliyan",
+        email: "baliyan2809@gmail.com",
+        phone: "+91 99999 88888",
+        company: "Calendly Corp",
+        role: "Founder",
+        avatar: "https://i.pravatar.cc/150?img=11",
+      };
+    } else if (lowercaseName.includes("pawan")) {
+      contactParams = {
+        id: 2,
+        name: "Pawan Kumar",
+        email: "pawan.kumar@gmail.com",
+        phone: "+91 98765 43210",
+        company: "Acme Corp",
+        role: "Maths Teacher",
+        avatar: "https://i.pravatar.cc/150?img=12",
+      };
+    } else if (lowercaseName.includes("sarah")) {
+      contactParams = {
+        id: 3,
+        name: "Sarah Jenkins",
+        email: "sarah.j@techflow.io",
+        phone: "+1 (555) 123-4567",
+        company: "TechFlow",
+        role: "Product Manager",
+        avatar: "https://i.pravatar.cc/150?img=49",
+      };
+    } else if (lowercaseName.includes("michael")) {
+      contactParams = {
+        id: 4,
+        name: "Michael Chen",
+        email: "m.chen@designhub.co",
+        phone: "+1 (555) 765-4321",
+        company: "DesignHub",
+        role: "Creative Director",
+        avatar: "https://i.pravatar.cc/150?img=33",
+      };
+    } else if (lowercaseName.includes("elena")) {
+      contactParams = {
+        id: 5,
+        name: "Elena Rodriguez",
+        email: "elena.r@designco.com",
+        phone: "+1 (555) 321-7654",
+        company: "DesignCo",
+        role: "Lead UX Designer",
+        avatar: "https://i.pravatar.cc/150?img=47",
+      };
+    }
+
+    router.push({
+      pathname: "/contactDetails",
+      params: contactParams,
+    });
+  }, [router]);
+
   // Open meeting details bottom sheet
   const openMeetingDetailsSheet = useCallback((meeting, date) => {
     setSelectedMeeting(meeting);
@@ -479,6 +551,19 @@ const CalenderScreen = () => {
                 </Text>
 
                 <View className="mb-6">
+                  {/* View Contact Profile Button */}
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => handleViewContact(selectedMeeting.name, selectedMeeting.avatar)}
+                    className="flex-row items-center py-3.5 border-b border-slate-50"
+                  >
+                    <Feather name="user" size={22} color="#1d4ed8" />
+                    <Text className="text-[16px] font-semibold text-slate-700 ml-4 flex-1">
+                      View contact profile
+                    </Text>
+                    <Feather name="chevron-right" size={16} color="#cbd5e1" />
+                  </TouchableOpacity>
+
                   {/* View Full Details Button */}
                   <TouchableOpacity
                     activeOpacity={0.7}
