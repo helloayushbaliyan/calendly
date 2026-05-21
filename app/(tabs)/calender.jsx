@@ -4,7 +4,8 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   BackHandler,
@@ -17,19 +18,35 @@ import {
 import { Calendar } from "react-native-calendars";
 
 const CalenderScreen = () => {
+  const router = useRouter();
   const today = new Date();
   const formattedToday = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
   const [selected, setSelected] = useState(formattedToday);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("All");
 
+  // Bottom Sheet Refs & States
   const meetingDetailsSheetRef = useRef(null);
-  const joinMeetingSheetRef = useRef(null);
+  const snapPoints = useMemo(() => ["55%"], []);
   const [selectedMeeting, setSelectedMeeting] = useState(null);
+  const [selectedMeetingDate, setSelectedMeetingDate] = useState("");
   const [isMeetingDetailsOpen, setIsMeetingDetailsOpen] = useState(false);
-  const [isJoinMeetingOpen, setIsJoinMeetingOpen] = useState(false);
 
-  // Android back press handler for Meeting Details Sheet
+  // Backdrop component for meeting details bottom sheet
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="close"
+        opacity={0.3}
+      />
+    ),
+    []
+  );
+
+  // Android hardware back button handler
   useEffect(() => {
     if (!isMeetingDetailsOpen) return;
 
@@ -46,57 +63,30 @@ const CalenderScreen = () => {
     return () => backHandler.remove();
   }, [isMeetingDetailsOpen]);
 
-  // Android back press handler for Join Meeting Sheet
-  useEffect(() => {
-    if (!isJoinMeetingOpen) return;
+  // Navigate to full details page
+  const openMeetingDetails = useCallback((meeting, date) => {
+    router.push({
+      pathname: "/meetingDetails",
+      params: {
+        id: meeting.id,
+        title: meeting.title,
+        name: meeting.name,
+        time: meeting.time,
+        color: meeting.color,
+        platform: meeting.platform,
+        avatar: meeting.avatar,
+        status: meeting.status,
+        date: date,
+      },
+    });
+  }, []);
 
-    const backAction = () => {
-      joinMeetingSheetRef.current?.dismiss();
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
-  }, [isJoinMeetingOpen]);
-
-  // Backdrop component
-  const renderBackdrop = useCallback(
-    (backdropProps) => (
-      <BottomSheetBackdrop
-        {...backdropProps}
-        appearsOnIndex={0}
-        disappearsOnIndex={-1}
-        pressBehavior="close"
-        opacity={0.3}
-      />
-    ),
-    []
-  );
-
-  const openMeetingDetails = useCallback((meeting) => {
+  // Open meeting details bottom sheet
+  const openMeetingDetailsSheet = useCallback((meeting, date) => {
     setSelectedMeeting(meeting);
+    setSelectedMeetingDate(date);
     meetingDetailsSheetRef.current?.present();
   }, []);
-
-  const openJoinMeeting = useCallback((meeting) => {
-    setSelectedMeeting(meeting);
-    joinMeetingSheetRef.current?.present();
-  }, []);
-
-  const handleAction = useCallback(
-    (actionName) => {
-      meetingDetailsSheetRef.current?.dismiss();
-      Alert.alert(
-        "Success",
-        `${actionName} selected for "${selectedMeeting?.name}"!`
-      );
-    },
-    [selectedMeeting]
-  );
 
   const scheduleData = [
     {
@@ -307,7 +297,7 @@ const CalenderScreen = () => {
                     <TouchableOpacity
                       key={meeting.id}
                       activeOpacity={0.9}
-                      onPress={() => openMeetingDetails(meeting)}
+                      onPress={() => openMeetingDetailsSheet(meeting, group.date)}
                       className="bg-white rounded-[32px] p-5 shadow-sm border border-slate-100/80 flex-col overflow-hidden"
                       style={{ borderLeftWidth: 4, borderLeftColor: meeting.color }}
                     >
@@ -345,7 +335,7 @@ const CalenderScreen = () => {
                       {/* Center Details Box */}
                       <TouchableOpacity
                         activeOpacity={0.7}
-                        onPress={() => openJoinMeeting(meeting)}
+                        onPress={() => openMeetingDetailsSheet(meeting, group.date)}
                         className="bg-slate-50/70 active:bg-slate-100/70 rounded-2xl p-4 mb-4 gap-y-3"
                       >
                         <View className="flex-row items-center">
@@ -376,7 +366,7 @@ const CalenderScreen = () => {
 
                         <TouchableOpacity
                           activeOpacity={0.7}
-                          onPress={() => openMeetingDetails(meeting)}
+                          onPress={() => openMeetingDetails(meeting, group.date)}
                           className="flex-1 py-3 bg-indigo-50/70 active:bg-indigo-100 rounded-xl ml-2 items-center justify-center"
                         >
                           <Text className="text-[14px] font-bold text-[#4F46E5]">
@@ -410,7 +400,7 @@ const CalenderScreen = () => {
       <BottomSheetModal
         ref={meetingDetailsSheetRef}
         index={0}
-        snapPoints={["60%"]}
+        snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
         enablePanDownToClose={true}
         onChange={(index) => setIsMeetingDetailsOpen(index > -1)}
@@ -428,79 +418,107 @@ const CalenderScreen = () => {
         <BottomSheetView className="flex-1 px-6 pt-4 bg-white">
           {selectedMeeting && (
             <>
-              {/* Header with Avatar and Status */}
-              <View className="flex-row items-center justify-between mt-2 mb-4">
-                <View className="flex-row items-center flex-1 mr-2">
-                  <Image
-                    source={{ uri: selectedMeeting.avatar }}
-                    className="w-12 h-12 rounded-full bg-slate-100 mr-3"
-                  />
-                  <View className="flex-1">
-                    <Text className="text-[18px] font-bold text-slate-800" numberOfLines={1}>
-                      {selectedMeeting.name}
-                    </Text>
-                    <Text className="text-[13px] font-medium text-slate-400 mt-0.5">
-                      Organizer
-                    </Text>
-                  </View>
-                </View>
-                <View className="bg-emerald-50/80 px-3 py-1.5 rounded-xl">
-                  <Text className="text-[11px] font-bold text-emerald-600 tracking-wider">
-                    {selectedMeeting.status}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Title & Time Capsule */}
-              <Text className="text-[20px] font-bold text-slate-800 mb-2">
+              {/* Title */}
+              <Text className="text-[22px] font-bold text-slate-800 mt-2 mb-1">
+                {selectedMeeting.name}
+              </Text>
+              <Text className="text-[14px] font-semibold text-slate-400 mb-4">
                 {selectedMeeting.title}
               </Text>
-              
-              <View className="bg-slate-50/80 rounded-2xl p-4 mb-4 gap-y-2.5">
-                <View className="flex-row items-center">
-                  <Feather name="calendar" size={16} color={selectedMeeting.color} />
-                  <Text className="text-[14px] font-semibold text-slate-700 ml-3">
-                    Thursday, May 21, 2026
-                  </Text>
-                </View>
-                <View className="flex-row items-center">
-                  <Feather name="clock" size={16} color={selectedMeeting.color} />
-                  <Text className="text-[14px] font-semibold text-slate-700 ml-3">
-                    {selectedMeeting.time} (30 mins)
-                  </Text>
-                </View>
-                <View className="flex-row items-center">
-                  <Feather name="video" size={16} color={selectedMeeting.color} />
-                  <Text className="text-[14px] font-semibold text-slate-700 ml-3">
-                    {selectedMeeting.platform}
-                  </Text>
-                </View>
-              </View>
 
               <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+                {/* MEETING INFO Section */}
+                <Text className="text-[12px] font-bold text-slate-400 tracking-wider mb-2">
+                  MEETING DETAILS
+                </Text>
+
+                <View className="mb-4">
+                  {/* Time Row */}
+                  <View className="flex-row items-center py-3.5">
+                    <Feather name="clock" size={22} color="#1d4ed8" />
+                    <View className="ml-4">
+                      <Text className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                        Time & Duration
+                      </Text>
+                      <Text className="text-[16px] font-semibold text-slate-700 mt-0.5">
+                        {selectedMeeting.time} (30 mins)
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Date Row */}
+                  <View className="flex-row items-center py-3.5">
+                    <Feather name="calendar" size={22} color="#1d4ed8" />
+                    <View className="ml-4">
+                      <Text className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                        Date
+                      </Text>
+                      <Text className="text-[16px] font-semibold text-slate-700 mt-0.5">
+                        {selectedMeetingDate}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Platform Row */}
+                  <View className="flex-row items-center py-3.5">
+                    <Feather name="video" size={22} color="#1d4ed8" />
+                    <View className="ml-4">
+                      <Text className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                        Platform / Location
+                      </Text>
+                      <Text className="text-[16px] font-semibold text-slate-700 mt-0.5">
+                        {selectedMeeting.platform}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
                 {/* ACTIONS Section */}
                 <Text className="text-[12px] font-bold text-slate-400 tracking-wider mb-2">
                   ACTIONS
                 </Text>
 
-                <View className="mb-4">
+                <View className="mb-6">
+                  {/* View Full Details Button */}
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={() => {
                       meetingDetailsSheetRef.current?.dismiss();
-                      openJoinMeeting(selectedMeeting);
+                      openMeetingDetails(selectedMeeting, selectedMeetingDate);
+                    }}
+                    className="flex-row items-center py-3.5"
+                  >
+                    <Feather name="info" size={22} color="#1d4ed8" />
+                    <Text className="text-[16px] font-semibold text-[#1d4ed8] ml-4">
+                      View full details screen
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* Join Meeting Button */}
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      meetingDetailsSheetRef.current?.dismiss();
+                      Alert.alert(
+                        "Launching Meeting",
+                        `Connecting to your ${selectedMeeting.platform === "Zoom Meeting" ? "Zoom Room" : "Google Meet"}...`
+                      );
                     }}
                     className="flex-row items-center py-3.5"
                   >
                     <Feather name="video" size={22} color="#1d4ed8" />
                     <Text className="text-[16px] font-medium text-slate-700 ml-4">
-                      Join meeting
+                      Join meeting now
                     </Text>
                   </TouchableOpacity>
 
+                  {/* Copy Link Button */}
                   <TouchableOpacity
                     activeOpacity={0.7}
-                    onPress={() => handleAction("Copy meeting link")}
+                    onPress={() => {
+                      meetingDetailsSheetRef.current?.dismiss();
+                      Alert.alert("Link Copied", "Meeting link has been copied to your clipboard!");
+                    }}
                     className="flex-row items-center py-3.5"
                   >
                     <Feather name="copy" size={22} color="#1d4ed8" />
@@ -509,108 +527,50 @@ const CalenderScreen = () => {
                     </Text>
                   </TouchableOpacity>
 
+                  {/* Reschedule Button */}
                   <TouchableOpacity
                     activeOpacity={0.7}
-                    onPress={() => handleAction("Email organizer")}
+                    onPress={() => {
+                      meetingDetailsSheetRef.current?.dismiss();
+                      Alert.alert("Reschedule", `Rescheduling "${selectedMeeting.title}" with ${selectedMeeting.name}...`);
+                    }}
                     className="flex-row items-center py-3.5"
                   >
-                    <Feather name="mail" size={22} color="#1d4ed8" />
-                    <Text className="text-[16px] font-medium text-slate-700 ml-4">
-                      Email organizer
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
-                {/* MANAGEMENT Section */}
-                <Text className="text-[12px] font-bold text-slate-400 tracking-wider mb-2">
-                  MANAGEMENT
-                </Text>
-
-                <View className="mb-4">
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => handleAction("Reschedule")}
-                    className="flex-row items-center py-3.5"
-                  >
-                    <Feather name="edit-2" size={22} color="#1d4ed8" />
+                    <Feather name="refresh-cw" size={22} color="#1d4ed8" />
                     <Text className="text-[16px] font-medium text-slate-700 ml-4">
                       Reschedule meeting
                     </Text>
                   </TouchableOpacity>
 
+                  {/* Cancel Button */}
                   <TouchableOpacity
                     activeOpacity={0.7}
-                    onPress={() => handleAction("Cancel meeting")}
+                    onPress={() => {
+                      meetingDetailsSheetRef.current?.dismiss();
+                      Alert.alert(
+                        "Cancel Meeting",
+                        `Are you sure you want to cancel "${selectedMeeting.title}"?`,
+                        [
+                          { text: "No, Keep It", style: "cancel" },
+                          {
+                            text: "Yes, Cancel It",
+                            style: "destructive",
+                            onPress: () => {
+                              Alert.alert("Meeting Cancelled", "The meeting has been removed.");
+                            },
+                          },
+                        ]
+                      );
+                    }}
                     className="flex-row items-center py-3.5"
                   >
-                    <Feather name="trash-2" size={22} color="#ef4444" />
+                    <Feather name="x-circle" size={22} color="#dc2626" />
                     <Text className="text-[16px] font-medium text-red-600 ml-4">
                       Cancel meeting
                     </Text>
                   </TouchableOpacity>
                 </View>
               </ScrollView>
-            </>
-          )}
-        </BottomSheetView>
-      </BottomSheetModal>
-
-      {/* High-Fidelity Join Meeting Bottom Sheet */}
-      <BottomSheetModal
-        ref={joinMeetingSheetRef}
-        index={0}
-        snapPoints={["32%"]}
-        backdropComponent={renderBackdrop}
-        enablePanDownToClose={true}
-        onChange={(index) => setIsJoinMeetingOpen(index > -1)}
-        backgroundStyle={{
-          backgroundColor: "#ffffff",
-          borderTopLeftRadius: 28,
-          borderTopRightRadius: 28,
-        }}
-        handleIndicatorStyle={{
-          backgroundColor: "#cbd5e1",
-          width: 36,
-          height: 4,
-        }}
-      >
-        <BottomSheetView className="flex-1 px-6 pt-4 bg-white">
-          {selectedMeeting && (
-            <>
-              {/* Title */}
-              <Text className="text-[22px] font-bold text-slate-800 mt-2 mb-4">
-                Join meeting
-              </Text>
-
-              <View className="mb-4">
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    joinMeetingSheetRef.current?.dismiss();
-                    Alert.alert("Success", `Opening ${selectedMeeting.platform === "Zoom Meeting" ? "Zoom" : "Google Meet"} app...`);
-                  }}
-                  className="flex-row items-center py-3.5"
-                >
-                  <Feather name="video" size={22} color="#1d4ed8" />
-                  <Text className="text-[16px] font-medium text-slate-700 ml-4">
-                    Join via {selectedMeeting.platform === "Zoom Meeting" ? "Zoom" : "Google Meet"}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    joinMeetingSheetRef.current?.dismiss();
-                    Alert.alert("Success", "Meeting link copied to clipboard!");
-                  }}
-                  className="flex-row items-center py-3.5"
-                >
-                  <Feather name="copy" size={22} color="#1d4ed8" />
-                  <Text className="text-[16px] font-medium text-slate-700 ml-4">
-                    Copy meetings URL
-                  </Text>
-                </TouchableOpacity>
-              </View>
             </>
           )}
         </BottomSheetView>
