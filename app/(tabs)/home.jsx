@@ -1,4 +1,4 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -114,10 +114,12 @@ const Home = () => {
         {/* User & Bell */}
         <View className="flex-row justify-between items-center">
           <View className="flex-row items-center">
-            <Image
-              source={{ uri: "https://i.pravatar.cc/150?img=11" }}
-              className="w-12 h-12 rounded-full border-2 border-white/20"
-            />
+            <TouchableOpacity onPress={() => route.push("/settings")}>
+              <Image
+                source={{ uri: "https://i.pravatar.cc/150?img=11" }}
+                className="w-12 h-12 rounded-full border-2 border-white/20"
+              />
+            </TouchableOpacity>
             <View className="ml-3">
               <Text className="text-indigo-100 text-[13px] font-medium">
                 Good morning,
