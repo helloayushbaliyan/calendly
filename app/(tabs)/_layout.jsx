@@ -7,11 +7,17 @@ import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react"; // Add this hook
 
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { useMemo, useRef } from "react";
+import { Text, TouchableOpacity } from "react-native";
 import "../../global.css";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const visibility = NavigationBar.useVisibility();
+  const bottomSheetRef = useRef(null);
+  const snapPoints = useMemo(() => ["45%"], []);
+
 
   // 2. Set the navigation bar styling imperatively instead of using JSX
   useEffect(() => {
@@ -19,7 +25,12 @@ export default function TabLayout() {
     NavigationBar.setStyle("dark");
   }, []);
 
+  const openBottomSheet = () => {
+    bottomSheetRef.current?.present();
+  }
+
   return (
+
     <>
       <StatusBar style="light" />
       {/* 3. REMOVED: <NavigationBar style="dark" /> is gone from here */}
@@ -77,8 +88,18 @@ export default function TabLayout() {
           name="quickActions"
           options={{
             title: "Bookings",
-            tabBarIcon: ({ color }) => (
-              <Entypo name="plus" size={24} color={color} />
+            tabBarButton: (props) => (
+              <TouchableOpacity
+                {...props}
+                onPress={openBottomSheet}
+                style={[props.style, { justifyContent: "center", alignItems: "center" }]}
+              >
+                <Entypo
+                  name="plus"
+                  size={28}
+                  color={props.accessibilityState?.selected ? "#1D4ED8" : "#94A3B8"}
+                />
+              </TouchableOpacity>
             ),
           }}
         />
@@ -103,6 +124,32 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
+
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        index={0}
+        snapPoints={snapPoints}
+        enablePanDownToClose
+        backgroundStyle={{
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          backgroundColor: "white",
+        }}
+        handleIndicatorStyle={{
+          backgroundColor: "#666",
+          width: 60,
+        }}
+      >
+        <BottomSheetView className="flex-1 items-center justify-center">
+          <Text className="text-2xl font-bold">
+            Awesome 🎉
+          </Text>
+
+          <Text className="text-base font-medium">
+            Your quick actions bottom sheet is working.
+          </Text>
+        </BottomSheetView>
+      </BottomSheetModal>
     </>
   );
 }
