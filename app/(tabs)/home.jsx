@@ -1,12 +1,12 @@
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Alert, BackHandler, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 const Home = () => {
   const route = useRouter();
@@ -42,6 +42,42 @@ const Home = () => {
   ], []);
 
   const [selectedEvent, setSelectedEvent] = useState(events[0]);
+  const [isEventDetailsOpen, setIsEventDetailsOpen] = useState(false);
+  const [isJoinMeetingOpen, setIsJoinMeetingOpen] = useState(false);
+
+  // Android hardware back handler for Event Details Sheet
+  useEffect(() => {
+    if (!isEventDetailsOpen) return;
+
+    const backAction = () => {
+      eventDetailsSheetRef.current?.dismiss();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [isEventDetailsOpen]);
+
+  // Android hardware back handler for Join Meeting Sheet
+  useEffect(() => {
+    if (!isJoinMeetingOpen) return;
+
+    const backAction = () => {
+      joinMeetingSheetRef.current?.dismiss();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [isJoinMeetingOpen]);
 
   // Backdrop component
   const renderBackdrop = useCallback(
@@ -51,7 +87,7 @@ const Home = () => {
         appearsOnIndex={0}
         disappearsOnIndex={-1}
         pressBehavior="close"
-        opacity={0.5}
+        opacity={0.3}
       />
     ),
     []
@@ -267,12 +303,12 @@ const Home = () => {
           <Text className="text-[18px] font-bold text-gray-900 mb-4">
             Meeting snapshot
           </Text>
-          
+
           <View className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 mb-6">
             <Text className="text-[11px] font-bold text-gray-400 tracking-wider mb-3">
               TOMORROW
             </Text>
-            
+
             {/* Title with Dot Indicator */}
             <View className="flex-row items-center justify-between mb-3">
               <View className="flex-row items-center">
@@ -283,7 +319,7 @@ const Home = () => {
               </View>
               <Feather name="chevron-right" size={16} color="#9CA3AF" />
             </View>
-            
+
             {/* Host Row */}
             <View className="flex-row items-center mb-3">
               <Feather name="users" size={14} color="#64748B" />
@@ -291,7 +327,7 @@ const Home = () => {
                 with <Text className="font-bold text-gray-700">Pawan</Text>
               </Text>
             </View>
-            
+
             {/* Date & Time & App Row */}
             <View className="flex-row items-center mb-5">
               <Feather name="calendar" size={14} color="#64748B" />
@@ -299,7 +335,7 @@ const Home = () => {
                 May 22 • 11:00 - 11:45 AM • Google Meet
               </Text>
             </View>
-            
+
             {/* Action Buttons */}
             <View className="flex-row gap-3">
               <TouchableOpacity
@@ -311,7 +347,7 @@ const Home = () => {
                   View Contact
                 </Text>
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={openJoinMeeting}
@@ -369,9 +405,10 @@ const Home = () => {
       <BottomSheetModal
         ref={eventDetailsSheetRef}
         index={0}
-        snapPoints={["60%"]}
+        snapPoints={["55%"]}
         backdropComponent={renderBackdrop}
         enablePanDownToClose={true}
+        onChange={(index) => setIsEventDetailsOpen(index > -1)}
         backgroundStyle={{
           backgroundColor: "#ffffff", // Light theme white background
           borderTopLeftRadius: 28,
@@ -384,40 +421,30 @@ const Home = () => {
         }}
       >
         <BottomSheetView className="flex-1 px-6 pt-4 bg-white">
-          {/* Header */}
-          <View className="flex-row items-center justify-between mb-4">
-            <View className="flex-1">
-              <Text className="text-[22px] font-bold text-slate-800 mb-0.5">
-                {selectedEvent.title}
-              </Text>
-              <Text className="text-[13px] font-medium text-slate-400">
-                {selectedEvent.subtitle}
-              </Text>
-            </View>
-            {/* Initials Avatar */}
-            <View className="w-11 h-11 rounded-full bg-slate-50 border border-slate-100 items-center justify-center">
-              <Text className="text-[14px] font-bold text-[#1d4ed8]">
-                {selectedEvent.initials}
-              </Text>
-            </View>
-          </View>
-
-          <View className="h-[1px] bg-slate-100 mb-5" />
+          {/* Title */}
+          <Text className="text-[22px] font-bold text-slate-800 mt-2 mb-1">
+            {selectedEvent.title}
+          </Text>
+          {selectedEvent.subtitle && (
+            <Text className="text-[13px] font-medium text-slate-400 mb-4">
+              {selectedEvent.subtitle}
+            </Text>
+          )}
 
           <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
             {/* SCHEDULING Section */}
-            <Text className="text-[11px] font-bold text-slate-400 tracking-wider mb-2">
+            <Text className="text-[12px] font-bold text-slate-400 tracking-wider mb-2">
               SCHEDULING
             </Text>
 
-            <View className="mb-6 bg-slate-50/50 rounded-2xl p-2 border border-slate-100/50">
+            <View className="mb-4">
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("Copy link")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="copy" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="copy" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   Copy link
                 </Text>
               </TouchableOpacity>
@@ -425,10 +452,10 @@ const Home = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("Create single-use link")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="zap" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="zap" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   Create single-use link
                 </Text>
               </TouchableOpacity>
@@ -436,10 +463,10 @@ const Home = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("Book meeting")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="calendar" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="calendar" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   Book meeting
                 </Text>
               </TouchableOpacity>
@@ -447,28 +474,28 @@ const Home = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("More share options")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="share-2" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="share-2" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   More share options
                 </Text>
               </TouchableOpacity>
             </View>
 
             {/* CONFIGURE Section */}
-            <Text className="text-[11px] font-bold text-slate-400 tracking-wider mb-2">
+            <Text className="text-[12px] font-bold text-slate-400 tracking-wider mb-2">
               CONFIGURE
             </Text>
 
-            <View className="mb-6 bg-slate-50/50 rounded-2xl p-2 border border-slate-100/50">
+            <View className="mb-4">
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("Mark as favorite")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="star" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="star" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   Mark as favorite
                 </Text>
               </TouchableOpacity>
@@ -476,10 +503,10 @@ const Home = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("View booking page")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="eye" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="eye" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   View booking page
                 </Text>
               </TouchableOpacity>
@@ -487,10 +514,10 @@ const Home = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("Edit event type")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="edit-2" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="edit-2" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   Edit event type
                 </Text>
               </TouchableOpacity>
@@ -503,9 +530,10 @@ const Home = () => {
       <BottomSheetModal
         ref={joinMeetingSheetRef}
         index={0}
-        snapPoints={["25%"]}
+        snapPoints={["30%"]}
         backdropComponent={renderBackdrop}
         enablePanDownToClose={true}
+        onChange={(index) => setIsJoinMeetingOpen(index > -1)}
         backgroundStyle={{
           backgroundColor: "#ffffff", // Light theme white background
           borderTopLeftRadius: 28,
@@ -517,18 +545,23 @@ const Home = () => {
           height: 4,
         }}
       >
-        <BottomSheetView className="flex-1 px-6 pt-5 bg-white">
-          <View className="gap-y-4">
+        <BottomSheetView className="flex-1 px-6 pt-4 bg-white">
+          {/* Title */}
+          <Text className="text-[22px] font-bold text-slate-800 mt-2 mb-4">
+            Join meeting
+          </Text>
+
+          <View className="mb-4">
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => {
                 joinMeetingSheetRef.current?.dismiss();
                 Alert.alert("Success", "Opening Google Meet app...");
               }}
-              className="flex-row items-center py-3.5 px-4 bg-slate-50 border border-slate-100 rounded-[20px] active:bg-slate-100"
+              className="flex-row items-center py-3.5"
             >
-              <Feather name="video" size={20} color="#1d4ed8" />
-              <Text className="text-[16px] font-bold text-slate-700 ml-4">
+              <Feather name="video" size={22} color="#1d4ed8" />
+              <Text className="text-[16px] font-medium text-slate-700 ml-4">
                 Join meeting on Google Meet
               </Text>
             </TouchableOpacity>
@@ -539,10 +572,10 @@ const Home = () => {
                 joinMeetingSheetRef.current?.dismiss();
                 Alert.alert("Success", "Meetings URL copied to clipboard!");
               }}
-              className="flex-row items-center py-3.5 px-4 bg-slate-50 border border-slate-100 rounded-[20px] active:bg-slate-100"
+              className="flex-row items-center py-3.5"
             >
-              <Feather name="copy" size={20} color="#1d4ed8" />
-              <Text className="text-[16px] font-bold text-slate-700 ml-4">
+              <Feather name="copy" size={22} color="#1d4ed8" />
+              <Text className="text-[16px] font-medium text-slate-700 ml-4">
                 Copy meetings URL
               </Text>
             </TouchableOpacity>

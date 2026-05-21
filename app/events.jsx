@@ -5,9 +5,10 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
+  BackHandler,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -47,6 +48,24 @@ const EventsScreen = () => {
   ];
 
   const [selectedEvent, setSelectedEvent] = useState(events[0]);
+  const [isEventDetailsOpen, setIsEventDetailsOpen] = useState(false);
+
+  // Android hardware back handler for Event Details Sheet
+  useEffect(() => {
+    if (!isEventDetailsOpen) return;
+
+    const backAction = () => {
+      eventDetailsSheetRef.current?.dismiss();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [isEventDetailsOpen]);
 
   // Bottom Sheet Backdrop setup
   const renderBackdrop = useCallback(
@@ -56,7 +75,7 @@ const EventsScreen = () => {
         appearsOnIndex={0}
         disappearsOnIndex={-1}
         pressBehavior="close"
-        opacity={0.5}
+        opacity={0.3}
       />
     ),
     []
@@ -127,9 +146,10 @@ const EventsScreen = () => {
       <BottomSheetModal
         ref={eventDetailsSheetRef}
         index={0}
-        snapPoints={["60%"]}
+        snapPoints={["55%"]}
         backdropComponent={renderBackdrop}
         enablePanDownToClose={true}
+        onChange={(index) => setIsEventDetailsOpen(index > -1)}
         backgroundStyle={{
           backgroundColor: "#ffffff", // Light theme white background
           borderTopLeftRadius: 28,
@@ -142,41 +162,30 @@ const EventsScreen = () => {
         }}
       >
         <BottomSheetView className="flex-1 px-6 pt-4 bg-white">
-          {/* Header Section */}
-          <View className="flex-row items-center justify-between mb-4">
-            <View className="flex-1">
-              <Text className="text-[22px] font-bold text-slate-800 mb-0.5">
-                {selectedEvent.title}
-              </Text>
-              <Text className="text-[13px] font-medium text-slate-400">
-                {selectedEvent.subtitle}
-              </Text>
-            </View>
-            {/* Round Avatar Badge */}
-            <View className="w-11 h-11 rounded-full bg-slate-50 border border-slate-100 items-center justify-center shadow-sm">
-              <Text className="text-[14px] font-bold text-[#1d4ed8]">
-                {selectedEvent.initials}
-              </Text>
-            </View>
-          </View>
-
-          {/* Divider */}
-          <View className="h-[1px] bg-slate-100 mb-5" />
+          {/* Title */}
+          <Text className="text-[22px] font-bold text-slate-800 mt-2 mb-1">
+            {selectedEvent.title}
+          </Text>
+          {selectedEvent.subtitle && (
+            <Text className="text-[13px] font-medium text-slate-400 mb-4">
+              {selectedEvent.subtitle}
+            </Text>
+          )}
 
           <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
             {/* SCHEDULING Section */}
-            <Text className="text-[11px] font-bold text-slate-400 tracking-wider mb-2">
+            <Text className="text-[12px] font-bold text-slate-400 tracking-wider mb-2">
               SCHEDULING
             </Text>
 
-            <View className="mb-6 bg-slate-50/50 rounded-2xl p-2 border border-slate-100/50">
+            <View className="mb-4">
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("Copy link")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="copy" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="copy" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   Copy link
                 </Text>
               </TouchableOpacity>
@@ -184,10 +193,10 @@ const EventsScreen = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("Create single-use link")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="zap" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="zap" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   Create single-use link
                 </Text>
               </TouchableOpacity>
@@ -195,10 +204,10 @@ const EventsScreen = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("Book meeting")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="calendar" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="calendar" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   Book meeting
                 </Text>
               </TouchableOpacity>
@@ -206,28 +215,28 @@ const EventsScreen = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("More share options")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="share-2" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="share-2" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   More share options
                 </Text>
               </TouchableOpacity>
             </View>
 
             {/* CONFIGURE Section */}
-            <Text className="text-[11px] font-bold text-slate-400 tracking-wider mb-2">
+            <Text className="text-[12px] font-bold text-slate-400 tracking-wider mb-2">
               CONFIGURE
             </Text>
 
-            <View className="mb-6 bg-slate-50/50 rounded-2xl p-2 border border-slate-100/50">
+            <View className="mb-4">
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("Mark as favorite")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="star" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="star" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   Mark as favorite
                 </Text>
               </TouchableOpacity>
@@ -235,10 +244,10 @@ const EventsScreen = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("View booking page")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="eye" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="eye" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   View booking page
                 </Text>
               </TouchableOpacity>
@@ -246,10 +255,10 @@ const EventsScreen = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={() => handleAction("Edit event type")}
-                className="flex-row items-center py-3 px-3 rounded-xl active:bg-slate-100/50"
+                className="flex-row items-center py-3.5"
               >
-                <Feather name="edit-2" size={18} color="#1d4ed8" />
-                <Text className="text-[15px] font-semibold text-slate-700 ml-3.5">
+                <Feather name="edit-2" size={22} color="#1d4ed8" />
+                <Text className="text-[16px] font-medium text-slate-700 ml-4">
                   Edit event type
                 </Text>
               </TouchableOpacity>
