@@ -194,7 +194,26 @@ const Home = () => {
 
           <View className="grid grid-cols-1 gap-4">
             {/* Card 1 */}
-            <View className="bg-white rounded-3xl p-5 shadow-sm border-l-[4px] border-l-[#4F46E5]">
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() =>
+                route.push({
+                  pathname: "/meetingDetails",
+                  params: {
+                    id: 101,
+                    title: "Product Demo Call",
+                    name: "Alex Thompson",
+                    time: "10:00 AM - 10:30 AM",
+                    color: "#4F46E5",
+                    platform: "Google Meet",
+                    avatar: "https://i.pravatar.cc/150?img=12",
+                    status: "CONFIRMED",
+                    date: "Today",
+                  },
+                })
+              }
+              className="bg-white rounded-3xl p-5 shadow-sm border-l-[4px] border-l-[#4F46E5]"
+            >
               <View className="flex-row justify-between items-center mb-3">
                 <Text className="text-[#4F46E5] text-[12px] font-bold">
                   10:00 AM - 10:30 AM
@@ -221,14 +240,33 @@ const Home = () => {
                     <Text className="text-gray-400 text-[11px]">Acme Corp</Text>
                   </View>
                 </View>
-                <TouchableOpacity className="w-8 h-8 bg-gray-50 rounded-full items-center justify-center">
+                <View className="w-8 h-8 bg-gray-50 rounded-full items-center justify-center">
                   <Feather name="more-horizontal" size={16} color="#9CA3AF" />
-                </TouchableOpacity>
+                </View>
               </View>
-            </View>
+            </TouchableOpacity>
 
             {/* Card 2 */}
-            <View className="bg-white rounded-3xl p-5 shadow-sm border-l-[4px] border-l-gray-400">
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() =>
+                route.push({
+                  pathname: "/meetingDetails",
+                  params: {
+                    id: 102,
+                    title: "Quarterly Review",
+                    name: "David Chen",
+                    time: "1:00 PM - 2:00 PM",
+                    color: "#9CA3AF",
+                    platform: "Zoom Meeting",
+                    avatar: "https://i.pravatar.cc/150?img=33",
+                    status: "CONFIRMED",
+                    date: "Today",
+                  },
+                })
+              }
+              className="bg-white rounded-3xl p-5 shadow-sm border-l-[4px] border-l-gray-400"
+            >
               <View className="flex-row justify-between items-center mb-3">
                 <Text className="text-gray-500 text-[12px] font-bold">
                   1:00 PM - 2:00 PM
@@ -255,14 +293,33 @@ const Home = () => {
                     <Text className="text-gray-400 text-[11px]">TechFlow</Text>
                   </View>
                 </View>
-                <TouchableOpacity className="w-8 h-8 bg-gray-50 rounded-full items-center justify-center">
+                <View className="w-8 h-8 bg-gray-50 rounded-full items-center justify-center">
                   <Feather name="more-horizontal" size={16} color="#9CA3AF" />
-                </TouchableOpacity>
+                </View>
               </View>
-            </View>
+            </TouchableOpacity>
 
             {/* Card 3 */}
-            <View className="bg-white rounded-3xl p-5 shadow-sm border-l-[4px] border-l-gray-400">
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() =>
+                route.push({
+                  pathname: "/meetingDetails",
+                  params: {
+                    id: 103,
+                    title: "Sync with Design Team",
+                    name: "Elena Rodriguez",
+                    time: "3:30 PM - 4:00 PM",
+                    color: "#64748B",
+                    platform: "Microsoft Teams",
+                    avatar: "https://i.pravatar.cc/150?img=44",
+                    status: "CONFIRMED",
+                    date: "Today",
+                  },
+                })
+              }
+              className="bg-white rounded-3xl p-5 shadow-sm border-l-[4px] border-l-gray-400"
+            >
               <View className="flex-row justify-between items-center mb-3">
                 <Text className="text-gray-500 text-[12px] font-bold">
                   3:30 PM - 4:00 PM
@@ -292,11 +349,11 @@ const Home = () => {
                     </Text>
                   </View>
                 </View>
-                <TouchableOpacity className="w-8 h-8 bg-gray-50 rounded-full items-center justify-center">
+                <View className="w-8 h-8 bg-gray-50 rounded-full items-center justify-center">
                   <Feather name="more-horizontal" size={16} color="#9CA3AF" />
-                </TouchableOpacity>
+                </View>
               </View>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
