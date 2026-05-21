@@ -4,6 +4,7 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
+import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   BackHandler,
@@ -19,6 +20,7 @@ import {
  * Focuses purely on visual excellence and UI structure to match your reference layout.
  */
 const QuickActionsSheet = React.forwardRef((props, ref) => {
+  const router = useRouter();
   // Define sheet height snap point at 55% as per user preference
   const snapPoints = useMemo(() => ["50%"], []);
   const [isOpen, setIsOpen] = useState(false);
@@ -95,22 +97,15 @@ const QuickActionsSheet = React.forwardRef((props, ref) => {
         </Text>
 
         <View className="mb-4">
-          {/* Row 1: Book meeting */}
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => ref.current?.dismiss()}
-            className="flex-row items-center py-3.5"
-          >
-            <Ionicons name="calendar-outline" size={22} color="#1d4ed8" />
-            <Text className="text-[16px] font-medium text-slate-700 ml-4">
-              Book meeting
-            </Text>
-          </TouchableOpacity>
+
 
           {/* Row 2: Create event type */}
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => ref.current?.dismiss()}
+            onPress={() => {
+              ref.current?.dismiss();
+              router.push("/createEvent");
+            }}
             className="flex-row items-center py-3.5"
           >
             <Ionicons name="card-outline" size={22} color="#1d4ed8" />
@@ -119,34 +114,16 @@ const QuickActionsSheet = React.forwardRef((props, ref) => {
             </Text>
           </TouchableOpacity>
 
-          {/* Row 3: Create one off meeting */}
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => ref.current?.dismiss()}
-            className="flex-row items-center py-3.5"
-          >
-            <Ionicons name="time-outline" size={22} color="#1d4ed8" />
-            <Text className="text-[16px] font-medium text-slate-700 ml-4">
-              Create one off meeting
-            </Text>
-          </TouchableOpacity>
 
-          {/* Row 4: Create meeting poll */}
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => ref.current?.dismiss()}
-            className="flex-row items-center py-3.5"
-          >
-            <Ionicons name="list-outline" size={22} color="#1d4ed8" />
-            <Text className="text-[16px] font-medium text-slate-700 ml-4">
-              Create meeting poll
-            </Text>
-          </TouchableOpacity>
+
 
           {/* Row 5: Create new contact */}
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => ref.current?.dismiss()}
+            onPress={() => {
+              ref.current?.dismiss();
+              router.push("/createContact");
+            }}
             className="flex-row items-center py-3.5"
           >
             <Ionicons name="person-add-outline" size={22} color="#1d4ed8" />
