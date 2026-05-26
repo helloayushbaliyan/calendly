@@ -1,6 +1,8 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   Image,
   KeyboardAvoidingView,
@@ -13,11 +15,26 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import logo from "../../assets/images/logo.png";
+import { signinSchema } from "../../utils/authSchema";
 
 const index = () => {
   const route = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(signinSchema)
+  });
+
+  const onsubmit = (data) => {
+    console.log(data);
+    route.push("/home")
+
+  }
 
   return (
     <View className="flex-1 bg-[#F5F7FB]">
@@ -36,7 +53,7 @@ const index = () => {
       </View>
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" || "android" ? "padding" : "height"}
         className="flex-1"
       >
         <SafeAreaView edges={["bottom"]} className="flex-1 justify-end pb-4">
@@ -52,39 +69,59 @@ const index = () => {
               <Text className="mb-2 text-[14px] font-medium text-slate-700">
                 Email Address
               </Text>
-              <View className="flex-row items-center rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5">
-                <Feather name="mail" size={20} color="#94A3B8" />
-                <TextInput
-                  className="ml-3 flex-1 text-[16px] text-slate-900"
-                  placeholder="name@example.com"
-                  placeholderTextColor="#94A3B8"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              </View>
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, value } }) => (
+                  <View className="flex-row items-center rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5">
+                    <Feather name="mail" size={20} color="#94A3B8" />
+                    <TextInput
+                      className="ml-3 flex-1 text-[16px] text-slate-900"
+                      placeholder="name@example.com"
+                      placeholderTextColor="#94A3B8"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      value={value}
+                      onChangeText={onChange}
+                    />
+                  </View>
+                )}
+              />
+              {errors.email && (
+                <Text className="text-red-500">{errors.email.message}</Text>
+              )}
 
               <Text className="mb-2 mt-4 text-[14px] font-medium text-slate-700">
                 Password
               </Text>
-              <View className="flex-row items-center rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5">
-                <Feather name="lock" size={20} color="#94A3B8" />
-                <TextInput
-                  className="ml-3 flex-1 text-[16px] text-slate-900"
-                  placeholder="••••••••"
-                  placeholderTextColor="#94A3B8"
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                />
-                <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                >
-                  <Feather
-                    name={showPassword ? "eye" : "eye-off"}
-                    size={20}
-                    color="#94A3B8"
-                  />
-                </TouchableOpacity>
-              </View>
+              <Controller control={control}
+                name="password"
+                render={({ field: { onChange, value } }) => (
+                  <View className="flex-row items-center rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5">
+                    <Feather name="lock" size={20} color="#94A3B8" />
+                    <TextInput
+                      className="ml-3 flex-1 text-[16px] text-slate-900"
+                      placeholder="••••••••"
+                      placeholderTextColor="#94A3B8"
+                      secureTextEntry={!showPassword}
+                      autoCapitalize="none"
+                      value={value}
+                      onChangeText={onChange}
+                    />
+                    <TouchableOpacity
+                      onPress={() => setShowPassword(!showPassword)}
+                    >
+                      <Feather
+                        name={showPassword ? "eye" : "eye-off"}
+                        size={20}
+                        color="#94A3B8"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )} />
+              {errors.password && (
+                <Text className="text-red-500">{errors.password.message}</Text>
+              )}
 
               <View className="mt-4 flex-row items-center justify-between">
                 <TouchableOpacity
@@ -113,7 +150,7 @@ const index = () => {
               <TouchableOpacity
                 activeOpacity={0.85}
                 className="mt-6 w-full items-center justify-center rounded-xl bg-[#4F46E5] py-3.5 shadow-sm shadow-indigo-500/30"
-                onPress={() => route.push("/home")}
+                onPress={handleSubmit(onsubmit)}
               >
                 <Text className="text-[16px] font-bold text-white">Log in</Text>
               </TouchableOpacity>
