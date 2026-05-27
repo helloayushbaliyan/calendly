@@ -128,9 +128,8 @@ const SignUp = () => {
                   {[1, 2, 3, 4].map((level, index) => (
                     <View
                       key={level}
-                      className={`h-1.5 flex-1 rounded-full ${index !== 0 ? "ml-2" : ""} ${
-                        strength >= level ? "bg-[#4F46E5]" : "bg-gray-200"
-                      }`}
+                      className={`h-1.5 flex-1 rounded-full ${index !== 0 ? "ml-2" : ""} ${strength >= level ? "bg-[#4F46E5]" : "bg-gray-200"
+                        }`}
                     />
                   ))}
                 </View>

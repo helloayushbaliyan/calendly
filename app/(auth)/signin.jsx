@@ -14,13 +14,17 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
 import logo from "../../assets/images/logo.png";
+import { SignInUser } from "../../lib/services/authService";
+import { login } from "../../store/authSlice";
 import { signinSchema } from "../../utils/authSchema";
 
 const index = () => {
   const route = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const dispatch = useDispatch()
 
   const {
     control,
@@ -30,9 +34,20 @@ const index = () => {
     resolver: zodResolver(signinSchema)
   });
 
-  const onsubmit = (data) => {
-    console.log(data);
-    route.push("/home")
+  const onsubmit = async (formData) => {
+    console.log(formData);
+    try {
+      const data = await SignInUser(
+        formData.email, formData.password
+      )
+      if (data) {
+        dispatch(login(data))
+        // route.replace("/home")
+      }
+      console.log(data)
+    } catch (error) {
+      console.log("error: ", error)
+    }
 
   }
 
