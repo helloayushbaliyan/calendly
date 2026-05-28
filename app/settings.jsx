@@ -1,11 +1,25 @@
-import React, { useState } from "react";
-import { ScrollView, Text, View, TouchableOpacity, Image, Switch } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { useState } from "react";
+import { Image, ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
+import { signOutUser } from "../lib/services/authService";
+import { logout } from "../store/authSlice";
 
 const SettingsScreen = () => {
   const [googleSync, setGoogleSync] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleLogOut = async () => {
+    const session = await signOutUser()
+    if (!session) {
+      dispatch(logout());
+    }
+    router.replace("/signin")
+  }
+
 
   return (
     <SafeAreaView className="flex-1 bg-[#F8FAFC]">
@@ -133,7 +147,7 @@ const SettingsScreen = () => {
 
         {/* Logout */}
         <View className="px-6 mb-8">
-          <TouchableOpacity className="bg-red-50 rounded-[20px] p-4 flex-row items-center justify-center border border-red-100">
+          <TouchableOpacity onPress={handleLogOut} className="bg-red-50 rounded-[20px] p-4 flex-row items-center justify-center border border-red-100">
             <Ionicons name="log-out-outline" size={20} color="#DC2626" />
             <Text className="text-red-600 font-bold ml-2">Logout</Text>
           </TouchableOpacity>
@@ -143,7 +157,7 @@ const SettingsScreen = () => {
         <View className="px-6 mb-6">
           <View className="bg-[#4338CA] rounded-[28px] p-6 shadow-lg shadow-indigo-600/30 overflow-hidden relative">
             <View className="absolute right-0 top-0 w-32 h-32 bg-indigo-500/50 rounded-bl-[100px] blur-2xl" />
-            
+
             <View className="bg-white/20 self-start px-3 py-1 rounded-full mb-4">
               <Text className="text-white text-[9px] font-bold tracking-widest uppercase">Premium Elite</Text>
             </View>
