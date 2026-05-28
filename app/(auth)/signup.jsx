@@ -1,6 +1,8 @@
 import { Feather } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   ScrollView,
   StyleSheet,
@@ -10,12 +12,16 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
+import { CreateNewUser } from "../../lib/services/authService";
+import { login } from "../../store/authSlice";
+import { signupSchema } from "../../utils/authSchema";
 
 const SignUp = () => {
   const route = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
-
+  const dispatch = useDispatch()
   // Basic password strength logic for visual purposes
   const getPasswordStrength = () => {
     const length = password.length;
@@ -44,6 +50,30 @@ const SignUp = () => {
     }
   };
 
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(signupSchema)
+  })
+
+  const onsubmit = async (formData) => {
+    console.log(formData);
+    try {
+      const data = await CreateNewUser(
+        formData.email, formData.password
+      )
+      if (data) {
+        dispatch(login({ session: data.session, user: data.session.user }))
+        // route.replace("/home")
+      }
+    } catch (error) {
+      console.log("error: ", error)
+    }
+
+  }
   return (
     <View className="flex-1 bg-[#F5F7FB]">
       <View className="absolute top-0 h-[45%] w-full rounded-b-[40px] bg-[#4F46E5]">
@@ -73,44 +103,67 @@ const SignUp = () => {
               <Text className="mb-2 text-[14px] font-medium text-slate-700">
                 Full Name
               </Text>
-              <View className="flex-row items-center rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5">
-                <Feather name="user" size={20} color="#94A3B8" />
-                <TextInput
-                  className="ml-3 flex-1 text-[16px] text-slate-900"
-                  placeholder="John Doe"
-                  placeholderTextColor="#94A3B8"
-                  autoCapitalize="words"
-                />
-              </View>
+              <Controller control={control}
+                name={"name"}
+                render={({ field: { onChange, value } }) => (
+                  <View className="flex-row items-center rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5">
+                    <Feather name="user" size={20} color="#94A3B8" />
+                    <TextInput
+                      className="ml-3 flex-1 text-[16px] text-slate-900"
+                      placeholder="John Doe"
+                      placeholderTextColor="#94A3B8"
+                      autoCapitalize="words"
+                      value={value}
+                      onChangeText={onChange}
+                    />
+                  </View>
+                )} />
+              {errors.name && (
+                <Text className="text-red-500">{errors.name.message}</Text>
+              )}
 
               <Text className="mb-2 mt-6 text-[14px] font-medium text-slate-700">
                 Email Address
               </Text>
               <View className="flex-row items-center rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5">
                 <Feather name="mail" size={20} color="#94A3B8" />
-                <TextInput
-                  className="ml-3 flex-1 text-[16px] text-slate-900"
-                  placeholder="name@example.com"
-                  placeholderTextColor="#94A3B8"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
+                <Controller control={control}
+                  name={"email"}
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      className="ml-3 flex-1 text-[16px] text-slate-900"
+                      placeholder="name@example.com"
+                      placeholderTextColor="#94A3B8"
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      value={value}
+                      onChangeText={onChange}
+                    />
+                  )} />
+
               </View>
+              {errors.email && (
+                <Text className="text-red-500">{errors.email.message}</Text>
+              )}
 
               <Text className="mb-2 mt-6 text-[14px] font-medium text-slate-700">
                 Password
               </Text>
               <View className="flex-row items-center rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3.5">
                 <Feather name="lock" size={20} color="#94A3B8" />
-                <TextInput
-                  className="ml-3 flex-1 text-[16px] text-slate-900"
-                  placeholder="••••••••"
-                  placeholderTextColor="#94A3B8"
-                  secureTextEntry={!showPassword}
-                  autoCapitalize="none"
-                  value={password}
-                  onChangeText={setPassword}
-                />
+                <Controller control={control}
+                  name={"password"}
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      className="ml-3 flex-1 text-[16px] text-slate-900"
+                      placeholder="••••••••"
+                      placeholderTextColor="#94A3B8"
+                      secureTextEntry={!showPassword}
+                      autoCapitalize="none"
+                      value={value}
+                      onChangeText={onChange}
+                    />
+                  )} />
                 <TouchableOpacity
                   onPress={() => setShowPassword(!showPassword)}
                 >
@@ -121,6 +174,9 @@ const SignUp = () => {
                   />
                 </TouchableOpacity>
               </View>
+              {errors.password && (
+                <Text className="text-red-500">{errors.password.message}</Text>
+              )}
 
               {/* Password Strength Indicator */}
               <View className="mt-4">
@@ -142,7 +198,7 @@ const SignUp = () => {
               <TouchableOpacity
                 activeOpacity={0.85}
                 className="mt-8 w-full items-center justify-center rounded-xl bg-[#4F46E5] py-4 shadow-sm shadow-indigo-500/30"
-                onPress={() => route.push("/home")}
+                onPress={handleSubmit(onsubmit)}
               >
                 <Text className="text-[16px] font-bold text-white">
                   Create account
