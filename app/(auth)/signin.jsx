@@ -41,10 +41,9 @@ const index = () => {
         formData.email, formData.password
       )
       if (data) {
-        dispatch(login(data))
+        dispatch(login({ session: data.session, user: data.session.user }))
         // route.replace("/home")
       }
-      console.log(data)
     } catch (error) {
       console.log("error: ", error)
     }
