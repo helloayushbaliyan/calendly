@@ -21,8 +21,6 @@ const authSlice = createSlice({
             state.accessToken = action.payload?.session.access_token;
             state.isAuthenticated = !!action.payload?.session;
             console.log("Login:", state);
-
-
         },
         logout(state) {
             state.session = null;
