@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import logo from "../../assets/images/logo.png";
 import { SignInUser } from "../../lib/services/authService";
+import { signInWithGoogle } from "../../lib/services/googleAuth";
 import { login } from "../../store/authSlice";
 import { signinSchema } from "../../utils/authSchema";
 
@@ -54,6 +55,16 @@ const index = () => {
 
   }
 
+
+  const handleGoogleLogin = async () => {
+    const { data, error } = await signInWithGoogle();
+    if (data?.session) {
+      dispatch(login({ session: data.session, user: data.session.user }));
+    }
+    if (error) {
+      console.log("Google Login Error:", error);
+    }
+  }
   return (
     <View className="flex-1 bg-[#F5F7FB]">
       <View className="absolute top-0 h-[45%] w-full rounded-b-[40px] bg-[#4F46E5]">
@@ -182,6 +193,7 @@ const index = () => {
               </View>
 
               <TouchableOpacity
+                onPress={handleGoogleLogin}
                 activeOpacity={0.85}
                 className="w-full flex-row items-center justify-center rounded-xl border border-gray-200 bg-white py-3.5"
               >
