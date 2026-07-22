@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import { CreateNewUser } from "../../lib/services/authService";
+import { createProfile } from "../../lib/services/profileService";
 import { login } from "../../store/authSlice";
 import { signupSchema } from "../../utils/authSchema";
 
@@ -63,11 +64,25 @@ const SignUp = () => {
     console.log(formData);
     try {
       const data = await CreateNewUser(
-        formData.email, formData.password
+        formData.email, formData.password, formData.name
       )
+      console.log(data, "data");
+
       if (data) {
         dispatch(login({ session: data.session, user: data.session.user }))
-        // route.replace("/home")
+        // route.replace("/home"
+
+        const profile = await createProfile(
+          data.user.id,
+          formData.name,
+          formData.email
+        )
+
+        console.log(profile, "profile");
+
+        if (profile) {
+          route.replace("/home")
+        }
       }
     } catch (error) {
       console.log("error: ", error)
