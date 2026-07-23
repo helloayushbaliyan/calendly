@@ -60,6 +60,7 @@ const SignUp = () => {
     resolver: zodResolver(signupSchema)
   })
 
+
   const onsubmit = async (formData) => {
     console.log(formData);
     try {
