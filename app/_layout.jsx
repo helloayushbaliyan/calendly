@@ -7,7 +7,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import "../global.css";
 import { getCurrentSession } from "../lib/services/authService";
+import { getProfile } from "../lib/services/profileService";
 import { login, logout } from "../store/authSlice";
+import { userProfile } from "../store/profileSlice";
 import store from "../store/store";
 
 function AppLayoutInner() {
@@ -26,8 +28,18 @@ function AppLayoutInner() {
   const getCurrentUser = async () => {
     try {
       const session = await getCurrentSession();
-      if (session) {
+      if (session && session.user) {
         dispatch(login({ session, user: session.user }));
+
+        // Fetch user profile centrally in _layout.jsx
+        try {
+          const profile = await getProfile(session.user.id);
+          if (profile) {
+            dispatch(userProfile(profile));
+          }
+        } catch (profileErr) {
+          console.log("Error fetching profile in _layout: ", profileErr);
+        }
       } else {
         dispatch(logout());
       }

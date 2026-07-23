@@ -14,9 +14,6 @@ const profileSlice = createSlice({
     }
 })
 
-console.log(initialState);
-
-
 
 export const { userProfile } = profileSlice.actions
 export default profileSlice.reducer

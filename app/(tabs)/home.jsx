@@ -8,34 +8,15 @@ import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, BackHandler, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
-import { getProfile } from "../../lib/services/profileService";
+
 
 const Home = () => {
   const route = useRouter();
   const eventDetailsSheetRef = useRef(null);
   const joinMeetingSheetRef = useRef(null);
-  const user = useSelector((state) => state.auth.session)
-  console.log(user.user, "the home user id");
-
-  const GetUserProfile = async () => {
-    try {
-      const profile = await getProfile(user.user.id)
-      console.log(profile);
-
-      if (profile.length > 0) {
-      }
-
-    } catch (error) {
-      console.log("error: ", error);
-
-    }
-  }
-  useEffect(() => {
-    GetUserProfile()
-  }, [])
+  const profile = useSelector((state) => state.profile.profile)
 
 
-  // List of events
   const events = useMemo(() => [
     {
       id: 1,
@@ -147,7 +128,7 @@ const Home = () => {
                 Good morning,
               </Text>
               <Text className="text-white text-[18px] font-bold">
-                Sarah Jenkins
+                {profile?.user_name || "User"}
               </Text>
             </View>
           </View>
