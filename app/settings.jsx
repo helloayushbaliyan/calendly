@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import { signOutUser } from "../lib/services/authService";
 import { logout } from "../store/authSlice";
+import { clearProfile } from "../store/profileSlice";
 
 const SettingsScreen = () => {
   const [googleSync, setGoogleSync] = useState(true);
@@ -16,9 +17,11 @@ const SettingsScreen = () => {
     const session = await signOutUser()
     if (!session) {
       dispatch(logout());
+      dispatch(clearProfile())
     }
     router.replace("/signin")
   }
+
 
 
   return (

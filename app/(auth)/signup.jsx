@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { CreateNewUser } from "../../lib/services/authService";
 import { createProfile } from "../../lib/services/profileService";
 import { login } from "../../store/authSlice";
+import { userProfile } from "../../store/profileSlice";
 import { signupSchema } from "../../utils/authSchema";
 
 const SignUp = () => {
@@ -61,35 +62,41 @@ const SignUp = () => {
   })
 
 
-  const onsubmit = async (formData) => {
-    console.log(formData);
+  const onSubmit = async (formData) => {
     try {
+      // 1. Create Auth User
       const data = await CreateNewUser(
-        formData.email, formData.password, formData.name
-      )
-      console.log(data, "data");
+        formData.email,
+        formData.password,
+        formData.name
+      );
 
-      if (data) {
-        dispatch(login({ session: data.session, user: data.session.user }))
-        // route.replace("/home"
+      if (!data) return;
 
-        const profile = await createProfile(
-          data.user.id,
-          formData.name,
-          formData.email
-        )
+      // 2. Create Profile
+      const profile = await createProfile(
+        data.user.id,
+        formData.name,
+        formData.email
+      );
 
-        console.log(profile, "profile");
+      if (!profile) return;
 
-        if (profile) {
-          route.replace("/home")
-        }
-      }
+      // 3. Save everything in Redux
+      dispatch(
+        login({
+          session: data.session,
+          user: data.session.user,
+        })
+      );
+      dispatch(userProfile(profile));
+
+      // 4. Navigate
+      route.replace("/home");
     } catch (error) {
-      console.log("error: ", error)
+      console.log("Signup Error:", error);
     }
-
-  }
+  };
   return (
     <View className="flex-1 bg-[#F5F7FB]">
       <View className="absolute top-0 h-[45%] w-full rounded-b-[40px] bg-[#4F46E5]">
@@ -214,7 +221,7 @@ const SignUp = () => {
               <TouchableOpacity
                 activeOpacity={0.85}
                 className="mt-8 w-full items-center justify-center rounded-xl bg-[#4F46E5] py-4 shadow-sm shadow-indigo-500/30"
-                onPress={handleSubmit(onsubmit)}
+                onPress={handleSubmit(onSubmit)}
               >
                 <Text className="text-[16px] font-bold text-white">
                   Create account

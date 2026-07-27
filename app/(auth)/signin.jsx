@@ -18,7 +18,9 @@ import { useDispatch } from "react-redux";
 import logo from "../../assets/images/logo.png";
 import { SignInUser } from "../../lib/services/authService";
 import { signInWithGoogle } from "../../lib/services/googleAuth";
+import { getProfile } from "../../lib/services/profileService";
 import { login } from "../../store/authSlice";
+import { userProfile } from "../../store/profileSlice";
 import { signinSchema } from "../../utils/authSchema";
 
 const index = () => {
@@ -48,6 +50,16 @@ const index = () => {
       if (data) {
         dispatch(login({ session: data.session, user: data.session.user }))
         // route.replace("/home")
+
+        // Fetch user profile centrally in _layout.jsx
+        try {
+          const profile = await getProfile(data.session.user.id);
+          if (profile) {
+            dispatch(userProfile(profile));
+          }
+        } catch (profileErr) {
+          console.log("Error fetching profile in _layout: ", profileErr);
+        }
       }
     } catch (error) {
       console.log("error: ", error)
