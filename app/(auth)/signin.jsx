@@ -18,7 +18,7 @@ import { useDispatch } from "react-redux";
 import logo from "../../assets/images/logo.png";
 import { SignInUser } from "../../lib/services/authService";
 import { signInWithGoogle } from "../../lib/services/googleAuth";
-import { getProfile } from "../../lib/services/profileService";
+import { createProfile, getProfile } from "../../lib/services/profileService";
 import { login } from "../../store/authSlice";
 import { userProfile } from "../../store/profileSlice";
 import { signinSchema } from "../../utils/authSchema";
@@ -42,41 +42,71 @@ const index = () => {
 
 
   const onsubmit = async (formData) => {
-    console.log(formData);
     try {
+      // 1. Sign In User
       const data = await SignInUser(
-        formData.email, formData.password
-      )
-      if (data) {
-        dispatch(login({ session: data.session, user: data.session.user }))
-        // route.replace("/home")
+        formData.email,
+        formData.password
+      );
 
-        // Fetch user profile centrally in _layout.jsx
-        try {
-          const profile = await getProfile(data.session.user.id);
-          if (profile) {
-            dispatch(userProfile(profile));
-          }
-        } catch (profileErr) {
-          console.log("Error fetching profile in _layout: ", profileErr);
-        }
+      if (!data) return;
+
+      // 2. Fetch User Profile
+      const profile = await getProfile(data.session.user.id);
+
+      // 3. Save everything in Redux
+      dispatch(
+        login({
+          session: data.session,
+          user: data.session.user,
+        })
+      );
+
+      if (profile) {
+        dispatch(userProfile(profile));
       }
     } catch (error) {
-      console.log("error: ", error)
+      console.log("Signin Error:", error);
     }
-
-  }
+  };
 
 
   const handleGoogleLogin = async () => {
-    const { data, error } = await signInWithGoogle();
-    if (data?.session) {
-      dispatch(login({ session: data.session, user: data.session.user }));
+    try {
+      // 1. Sign in with Google
+      const { data, error } = await signInWithGoogle();
+
+      if (error) {
+        console.log("Google Login Error:", error);
+        return;
+      }
+
+      if (!data?.session?.user) return;
+
+      // 2. Fetch User Profile
+      let profile = await getProfile(data.session.user.id);
+
+      if (!profile) {
+        const name = data.session.user.user_metadata?.full_name || data.session.user.user_metadata?.name || "Google User";
+        const email = data.session.user.email || "";
+        profile = await createProfile(data.session.user.id, name, email);
+      }
+
+      // 3. Save everything in Redux
+      dispatch(
+        login({
+          session: data.session,
+          user: data.session.user,
+        })
+      );
+
+      if (profile) {
+        dispatch(userProfile(profile));
+      }
+    } catch (error) {
+      console.log("Google Login Exception:", error);
     }
-    if (error) {
-      console.log("Google Login Error:", error);
-    }
-  }
+  };
   return (
     <View className="flex-1 bg-[#F5F7FB]">
       <View className="absolute top-0 h-[45%] w-full rounded-b-[40px] bg-[#4F46E5]">

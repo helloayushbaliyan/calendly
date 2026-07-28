@@ -27,24 +27,30 @@ function AppLayoutInner() {
 
   const getCurrentUser = async () => {
     try {
+      // 1. Get Current Session
       const session = await getCurrentSession();
-      if (session && session.user) {
-        dispatch(login({ session, user: session.user }));
 
-        // Fetch user profile centrally in _layout.jsx
-        try {
-          const profile = await getProfile(session.user.id);
-          if (profile) {
-            dispatch(userProfile(profile));
-          }
-        } catch (profileErr) {
-          console.log("Error fetching profile in _layout: ", profileErr);
-        }
-      } else {
+      if (!session || !session.user) {
         dispatch(logout());
+        return;
+      }
+
+      // 2. Fetch User Profile
+      const profile = await getProfile(session.user.id);
+
+      // 3. Save everything in Redux
+      dispatch(
+        login({
+          session,
+          user: session.user,
+        })
+      );
+
+      if (profile) {
+        dispatch(userProfile(profile));
       }
     } catch (error) {
-      console.log("Error getting current user: ", error);
+      console.log("Error getting current user:", error);
       dispatch(logout());
     }
   };
