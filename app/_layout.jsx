@@ -98,6 +98,8 @@ function AppLayoutInner() {
           <Stack.Screen name="events" />
           <Stack.Screen name="meetingDetails" />
           <Stack.Screen name="contactDetails" />
+          <Stack.Screen name="availability" />
+          <Stack.Screen name="createSchedule" />
         </Stack>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>

@@ -74,7 +74,10 @@ const SettingsScreen = () => {
             </TouchableOpacity>
 
             {/* Availability */}
-            <TouchableOpacity className="flex-row items-center p-4">
+            <TouchableOpacity 
+              onPress={() => router.push("/availability")}
+              className="flex-row items-center p-4"
+            >
               <View className="w-10 h-10 rounded-full bg-purple-50 items-center justify-center mr-4">
                 <Ionicons name="time" size={18} color="#9333EA" />
               </View>

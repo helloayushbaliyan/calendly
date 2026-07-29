@@ -37,6 +37,7 @@ const QuickActionsSheet = React.forwardRef((props, ref) => {
     []
   );
 
+
   const handleSheetChanges = useCallback(
     (index) => {
       setIsOpen(index > -1);
@@ -142,7 +143,10 @@ const QuickActionsSheet = React.forwardRef((props, ref) => {
           {/* Row 6: Manage availability */}
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => ref.current?.dismiss()}
+            onPress={() => {
+              ref.current?.dismiss();
+              router.push("/availability");
+            }}
             className="flex-row items-center py-3.5"
           >
             <Ionicons name="alarm-outline" size={22} color="#1d4ed8" />
