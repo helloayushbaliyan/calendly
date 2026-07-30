@@ -16,7 +16,7 @@ export default function CreateScheduleScreen() {
 
   // Static weekday config
   const weekdays = [
-    { label: "Sun", active: false },
+    { label: "Sun", active: true },
     { label: "Mon", active: true },
     { label: "Tue", active: true },
     { label: "Wed", active: true },
@@ -86,7 +86,7 @@ export default function CreateScheduleScreen() {
                     }`}
                 >
                   <Text
-                    className={`text-xs font-bold ${day.active ? "text-white" : "text-gray-500"
+                    className={`text-[12px] font-bold ${day.active ? "text-white" : "text-gray-500"
                       }`}
                   >
                     {day.label}
@@ -114,23 +114,6 @@ export default function CreateScheduleScreen() {
             />
           </View>
 
-          {/* Card 4: Timezone Picker */}
-          <View className="bg-white p-5 rounded-[24px] mb-4 border border-gray-50 shadow-sm flex-row justify-between items-center">
-            <View>
-              <Text className="text-[11px] font-bold text-gray-400 tracking-wider mb-0.5">
-                TIMEZONE
-              </Text>
-              <Text className="text-gray-800 text-sm font-bold">
-                India Standard Time
-              </Text>
-            </View>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              className="w-10 h-10 bg-gray-50 rounded-full items-center justify-center border border-gray-100"
-            >
-              <Feather name="edit-3" size={16} color="#4F46E5" />
-            </TouchableOpacity>
-          </View>
 
           {/* Daily Schedule List */}
           <View className="mb-6">
@@ -139,26 +122,23 @@ export default function CreateScheduleScreen() {
             </Text>
 
             {activeDays.map((day) => (
-              <View key={day} className="bg-white rounded-[24px] p-5 mb-4 border border-gray-50 shadow-sm">
-                <View className="flex-row justify-between items-center mb-3">
-                  <Text className="text-gray-900 text-base font-bold">{day}s</Text>
-                  <TouchableOpacity activeOpacity={0.7} className="flex-row items-center">
-                    <Feather name="plus-circle" size={16} color="#4F46E5" />
-                    <Text className="text-[#4F46E5] text-xs font-bold ml-1">Add Slot</Text>
-                  </TouchableOpacity>
-                </View>
+              <View key={day} className="flex-row items-center justify-between mb-4">
+                {/* Day name */}
+                <Text className="text-gray-900 text-[18px] font-semibold ">
+                  {day}
+                </Text>
 
-                <View className="flex-row items-center mb-2">
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    className="bg-gray-55/50 border border-gray-100 rounded-[16px] px-4 py-3.5 flex-1 flex-row justify-between items-center mr-2 bg-gray-50"
-                  >
-                    <Text className="text-gray-800 text-[15px] font-semibold">
-                      9:00am - 5:00pm
-                    </Text>
-                    <Feather name="clock" size={16} color="#94a3b8" />
-                  </TouchableOpacity>
-                </View>
+                {/* Time block (compact width, not flex-1) */}
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  className="bg-white border border-gray-100 rounded-[12px] px-4 py-3  flex-row justify-between items-center shadow-sm"
+                >
+                  <Text className="text-gray-800 text-[16px] font-semibold">
+                    9:00am - 5:00pm
+                  </Text>
+                </TouchableOpacity>
+
+
               </View>
             ))}
           </View>

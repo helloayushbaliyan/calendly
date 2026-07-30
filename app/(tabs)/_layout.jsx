@@ -7,9 +7,9 @@ import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react"; // Add this hook
 
-import QuickActionsSheet from "../../components/QuickActionsSheet";
 import { useRef } from "react";
 import { TouchableOpacity } from "react-native";
+import QuickActionsSheet from "../../components/QuickActionsSheet";
 import "../../global.css";
 
 export default function TabLayout() {

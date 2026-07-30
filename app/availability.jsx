@@ -1,6 +1,5 @@
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
 import {
   ScrollView,
   Text,
@@ -70,28 +69,6 @@ export default function AvailabilityScreen() {
             <Text className="text-[#4F46E5] text-base font-bold">Create new schedule</Text>
           </TouchableOpacity>
 
-          {/* Event Types Subtitle */}
-          <Text className="text-[#4F46E5] text-sm font-semibold mb-6">
-            2 event types use custom schedules
-          </Text>
-        </View>
-
-        {/* Global Settings Section */}
-        <View>
-          <Text className="text-[11px] font-bold text-gray-400 tracking-wider mb-4 uppercase">
-            GLOBAL SETTINGS
-          </Text>
-
-          <TouchableOpacity
-            activeOpacity={0.8}
-            className="bg-white rounded-[24px] p-5 border border-gray-50 shadow-sm"
-          >
-            <Text className="text-gray-900 text-lg font-bold mb-1">Holidays</Text>
-            <Text className="text-gray-500 text-sm mb-3 leading-snug">
-              Block your availability for national holidays across all your event types
-            </Text>
-            <Text className="text-gray-400 text-xs font-semibold">0 holidays</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
