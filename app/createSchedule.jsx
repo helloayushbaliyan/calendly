@@ -1,5 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useRef } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -10,9 +11,11 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import TimePickerSheet from "../components/TimePickerSheet";
 
 export default function CreateScheduleScreen() {
   const router = useRouter();
+  const timePickerSheetRef = useRef(null);
 
   // Static weekday config
   const weekdays = [
@@ -131,6 +134,7 @@ export default function CreateScheduleScreen() {
                 {/* Time block (compact width, not flex-1) */}
                 <TouchableOpacity
                   activeOpacity={0.7}
+                  onPress={() => timePickerSheetRef.current?.present()}
                   className="bg-white border border-gray-100 rounded-[12px] px-4 py-3  flex-row justify-between items-center shadow-sm"
                 >
                   <Text className="text-gray-800 text-[16px] font-semibold">
@@ -160,6 +164,9 @@ export default function CreateScheduleScreen() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+
+      <TimePickerSheet ref={timePickerSheetRef} />
     </View>
   );
+
 }
