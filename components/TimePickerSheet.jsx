@@ -25,7 +25,7 @@ const ampmData = [
  * A premium, modern Bottom Sheet UI for time scheduling, styled using NativeWind (Tailwind CSS).
  * It features functional interactive tabs for Start/End times and uses `@quidone/react-native-wheel-picker`.
  */
-const TimePickerSheet = React.forwardRef((props, ref) => {
+const TimePickerSheet = React.forwardRef(({ onSave }, ref) => {
   // State for active panel editing selection
   const [activeTab, setActiveTab] = useState("start"); // "start" or "end"
 
@@ -37,6 +37,13 @@ const TimePickerSheet = React.forwardRef((props, ref) => {
   const [endHour, setEndHour] = useState(5);
   const [endMinute, setEndMinute] = useState(0);
   const [endAmPm, setEndAmPm] = useState("PM");
+
+
+  const startTime = `${startHour}:${startMinute < 10 ? `0${startMinute}` : startMinute
+    } ${startAmPm}`;
+
+  const endTime = `${endHour}:${endMinute < 10 ? `0${endMinute}` : endMinute
+    } ${endAmPm}`;
 
   // Snap point to cover approximately 60-65% of the screen
   const snapPoints = useMemo(() => ["63%"], []);
@@ -53,6 +60,21 @@ const TimePickerSheet = React.forwardRef((props, ref) => {
     ),
     []
   );
+
+
+  const handleSaveTime = () => {
+    onSave(startTime, endTime);
+    ref.current?.dismiss();
+
+    setStartHour(9);
+    setStartMinute(0);
+    setStartAmPm("AM");
+    setEndHour(5);
+    setEndMinute(0);
+    setEndAmPm("PM");
+    setActiveTab("start");
+
+  };
 
   return (
     <BottomSheetModal
@@ -219,7 +241,7 @@ const TimePickerSheet = React.forwardRef((props, ref) => {
           {/* Primary Action Button */}
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => ref.current?.dismiss()}
+            onPress={handleSaveTime}
             className="w-full py-4 bg-[#5B4CF5] rounded-2xl items-center justify-center"
             style={{
               shadowColor: "#5B4CF5",

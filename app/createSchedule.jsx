@@ -30,11 +30,11 @@ export default function CreateScheduleScreen() {
   const [availability, setAvailability] = useState({
     name: "",
     days: {
-      monday: [{ start: "09:00", end: "17:00" }],
-      tuesday: [{ start: "09:00", end: "17:00" }],
-      wednesday: [{ start: "09:00", end: "17:00" }],
-      thursday: [{ start: "09:00", end: "17:00" }],
-      friday: [{ start: "09:00", end: "17:00" }],
+      monday: [{ start: "9:00 am", end: "5:00 Pm" }],
+      tuesday: [{ start: "9:00 am", end: "5:00 Pm" }],
+      wednesday: [{ start: "9:00 am", end: "5:00 Pm" }],
+      thursday: [{ start: "9:00 am", end: "5:00 Pm" }],
+      friday: [{ start: "9:00 am", end: "5:00 Pm" }],
     },
   });
 
@@ -46,13 +46,30 @@ export default function CreateScheduleScreen() {
       if (newDays[dayidx]) {
         delete newDays[dayidx];
       } else {
-        newDays[dayidx] = [{ start: "09:00", end: "17:00" }];
+        newDays[dayidx] = [{ start: "9:00 am", end: "5:00 Pm" }];
       }
       return { ...prev, days: newDays };
     });
 
   };
 
+
+  const [selectDay, setSelectDay] = useState(null);
+
+
+  const handleSave = (startTime, endTime) => {
+    if (!selectDay) return
+
+    setAvailability((prev) => ({
+      ...prev, days: {
+        ...prev.days,
+
+        [selectDay]: [{ start: startTime, end: endTime }]
+      }
+    }))
+    timePickerSheetRef.current?.dismiss()
+    setSelectDay(null)
+  }
 
 
 
@@ -169,7 +186,10 @@ export default function CreateScheduleScreen() {
                     {/* Time block (compact width, not flex-1) */}
                     <TouchableOpacity
                       activeOpacity={0.7}
-                      onPress={() => timePickerSheetRef.current?.present()}
+                      onPress={() => {
+                        setSelectDay(day.key)
+                        timePickerSheetRef.current?.present()
+                      }}
                       className="bg-white border border-gray-100 rounded-[12px] px-4 py-3  flex-row justify-between items-center shadow-sm"
                     >
                       <Text className="text-gray-800 text-[16px] font-semibold">
@@ -200,7 +220,7 @@ export default function CreateScheduleScreen() {
         </View>
       </KeyboardAvoidingView>
 
-      <TimePickerSheet ref={timePickerSheetRef} />
+      <TimePickerSheet ref={timePickerSheetRef} onSave={handleSave} />
     </View>
   );
 
