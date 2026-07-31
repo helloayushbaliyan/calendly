@@ -40,7 +40,7 @@ export default function AvailabilityScreen() {
           {/* Single Static Availability Card */}
           <View className="bg-white rounded-[24px] p-5 mb-4 border border-gray-50 shadow-sm flex-row justify-between items-center">
             <TouchableOpacity
-              onPress={() => router.push("/createSchedule")}
+              onPress={() => router.push("/editSchedule")}
               activeOpacity={0.7}
               className="flex-1 pr-4"
             >
