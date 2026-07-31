@@ -1,11 +1,10 @@
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Switch,
   Text,
   TextInput,
   TouchableOpacity,
@@ -19,17 +18,43 @@ export default function CreateScheduleScreen() {
 
   // Static weekday config
   const weekdays = [
-    { label: "Sun", active: true },
-    { label: "Mon", active: true },
-    { label: "Tue", active: true },
-    { label: "Wed", active: true },
-    { label: "Thu", active: true },
-    { label: "Fri", active: true },
-    { label: "Sat", active: false }
+    { key: "sunday", label: "Sun" },
+    { key: "monday", label: "Mon" },
+    { key: "tuesday", label: "Tue" },
+    { key: "wednesday", label: "Wed" },
+    { key: "thursday", label: "Thu" },
+    { key: "friday", label: "Fri" },
+    { key: "saturday", label: "Sat" },
   ];
 
-  // Static daily schedule list
-  const activeDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const [availability, setAvailability] = useState({
+    name: "",
+    days: {
+      monday: [{ start: "09:00", end: "17:00" }],
+      tuesday: [{ start: "09:00", end: "17:00" }],
+      wednesday: [{ start: "09:00", end: "17:00" }],
+      thursday: [{ start: "09:00", end: "17:00" }],
+      friday: [{ start: "09:00", end: "17:00" }],
+    },
+  });
+
+
+
+  const toggleday = (dayidx) => {
+    setAvailability((prev) => {
+      const newDays = { ...prev.days };
+      if (newDays[dayidx]) {
+        delete newDays[dayidx];
+      } else {
+        newDays[dayidx] = [{ start: "09:00", end: "17:00" }];
+      }
+      return { ...prev, days: newDays };
+    });
+
+  };
+
+
+
 
   return (
     <View className="flex-1 bg-[#F8FAFC]">
@@ -66,10 +91,10 @@ export default function CreateScheduleScreen() {
               SCHEDULE NAME
             </Text>
             <TextInput
-              value="Working hours"
-              editable={false}
               placeholder="e.g. Working hours"
               placeholderTextColor="#94a3b8"
+              value={availability.name}
+              onChangeText={(text) => setAvailability({ ...availability, name: text })}
               className="bg-gray-50/50 border border-gray-100 rounded-[16px] p-4 text-[15px] text-gray-800 mb-2 font-medium"
             />
           </View>
@@ -81,26 +106,31 @@ export default function CreateScheduleScreen() {
             </Text>
 
             <View className="flex-row justify-between mb-2">
-              {weekdays.map((day, idx) => (
-                <TouchableOpacity
-                  key={idx}
-                  activeOpacity={0.8}
-                  className={`w-10 h-10 rounded-full items-center justify-center ${day.active ? "bg-[#4F46E5]" : "bg-gray-100"
-                    }`}
-                >
-                  <Text
-                    className={`text-[12px] font-bold ${day.active ? "text-white" : "text-gray-500"
+              {weekdays.map((day, idx) => {
+                const isActive = availability.days[day.key] !== undefined
+
+                return (
+                  <TouchableOpacity
+                    key={idx}
+                    activeOpacity={0.8}
+                    onPress={() => toggleday(day.key)}
+                    className={`w-10 h-10 rounded-full items-center justify-center ${isActive ? "bg-[#4F46E5]" : "bg-gray-100"
                       }`}
                   >
-                    {day.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+                    <Text
+                      className={`text-[12px] font-bold ${isActive ? "text-white" : "text-gray-500"
+                        }`}
+                    >
+                      {day.label}
+                    </Text>
+                  </TouchableOpacity>
+                )
+              })}
             </View>
           </View>
 
           {/* Card 3: Sync hours switch */}
-          <View className="flex-row justify-between items-center bg-white p-5 rounded-[24px] mb-4 border border-gray-50 shadow-sm">
+          {/* <View className="flex-row justify-between items-center bg-white p-5 rounded-[24px] mb-4 border border-gray-50 shadow-sm">
             <View className="flex-1 pr-4">
               <Text className="text-gray-900 text-sm font-bold mb-0.5">
                 Sync hours across days
@@ -110,41 +140,46 @@ export default function CreateScheduleScreen() {
               </Text>
             </View>
             <Switch
-              value={true}
-              disabled={true}
-              trackColor={{ false: "#E5E7EB", true: "#4F46E5" }}
+              value={false}
+              disabled={false}
+              trackColor={{ false: "#E5E7EB", false: "#4F46E5" }}
               thumbColor="#ffffff"
             />
-          </View>
+          </View> */}
 
 
           {/* Daily Schedule List */}
+
           <View className="mb-6">
             <Text className="text-[11px] font-bold text-gray-400 tracking-wider mb-4 uppercase">
               DAILY SCHEDULE
             </Text>
+            {weekdays
+              .filter((day) => availability.days[day.key] !== undefined)
+              .map((day) => {
+                const timeSlots = availability.days[day.key];
+                const capitalizedDay = day.key.charAt(0).toUpperCase() + day.key.slice(1);
+                return (
+                  <View key={day.key} className="flex-row items-center justify-between mb-4">
+                    {/* Day name */}
+                    <Text className="text-gray-900 text-[18px] font-semibold ">
+                      {capitalizedDay}
+                    </Text>
 
-            {activeDays.map((day) => (
-              <View key={day} className="flex-row items-center justify-between mb-4">
-                {/* Day name */}
-                <Text className="text-gray-900 text-[18px] font-semibold ">
-                  {day}
-                </Text>
+                    {/* Time block (compact width, not flex-1) */}
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => timePickerSheetRef.current?.present()}
+                      className="bg-white border border-gray-100 rounded-[12px] px-4 py-3  flex-row justify-between items-center shadow-sm"
+                    >
+                      <Text className="text-gray-800 text-[16px] font-semibold">
+                        {timeSlots[0].start} - {timeSlots[0].end}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
 
-                {/* Time block (compact width, not flex-1) */}
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={() => timePickerSheetRef.current?.present()}
-                  className="bg-white border border-gray-100 rounded-[12px] px-4 py-3  flex-row justify-between items-center shadow-sm"
-                >
-                  <Text className="text-gray-800 text-[16px] font-semibold">
-                    9:00am - 5:00pm
-                  </Text>
-                </TouchableOpacity>
-
-
-              </View>
-            ))}
           </View>
         </ScrollView>
 
