@@ -71,6 +71,10 @@ export default function CreateScheduleScreen() {
     setSelectDay(null)
   }
 
+  const handleSubmit = () => {
+    console.log(availability)
+    router.back()
+  }
 
 
   return (
@@ -212,7 +216,7 @@ export default function CreateScheduleScreen() {
             <Text className="text-gray-700 text-sm font-bold">Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={handleSubmit}
             className="flex-1 bg-[#4F46E5] py-4 rounded-full items-center justify-center active:bg-indigo-700"
           >
             <Text className="text-white text-sm font-bold">Save</Text>
