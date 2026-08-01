@@ -10,11 +10,13 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { scheduleSchema } from "../utils/scheduleSchema";
 import TimePickerSheet from "../components/TimePickerSheet";
 
 export default function CreateScheduleScreen() {
   const router = useRouter();
   const timePickerSheetRef = useRef(null);
+  const [errors, setErrors] = useState({});
 
   // Static weekday config
   const weekdays = [
@@ -72,8 +74,18 @@ export default function CreateScheduleScreen() {
   }
 
   const handleSubmit = () => {
-    console.log(availability)
-    router.back()
+    const result = scheduleSchema.safeParse(availability);
+    if (!result.success) {
+      const formattedErrors = {};
+      result.error.issues.forEach((issue) => {
+        formattedErrors[issue.path[0]] = issue.message;
+      });
+      setErrors(formattedErrors);
+      return;
+    }
+    setErrors({});
+    console.log(availability);
+    router.back();
   }
 
 
@@ -118,6 +130,9 @@ export default function CreateScheduleScreen() {
               onChangeText={(text) => setAvailability({ ...availability, name: text })}
               className="bg-gray-50/50 border border-gray-100 rounded-[16px] p-4 text-[15px] text-gray-800 mb-2 font-medium"
             />
+            {errors.name && (
+              <Text className="text-red-500 text-xs mt-1 ml-1">{errors.name}</Text>
+            )}
           </View>
 
           {/* Card 2: Weekday Chip Selection */}
@@ -148,6 +163,9 @@ export default function CreateScheduleScreen() {
                 )
               })}
             </View>
+            {errors.days && (
+              <Text className="text-red-500 text-xs mt-1 ml-1">{errors.days}</Text>
+            )}
           </View>
 
           {/* Card 3: Sync hours switch */}
