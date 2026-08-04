@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import {
   ScrollView,
   Text,
@@ -25,9 +25,13 @@ export default function AvailabilityScreen() {
     }
   }
 
-  useEffect(() => {
-    FetchAvailabilty()
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.id) {
+        FetchAvailabilty();
+      }
+    }, [user?.id])
+  );
 
   return (
     <View className="flex-1 bg-[#F8FAFC]">
