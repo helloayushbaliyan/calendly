@@ -1,14 +1,33 @@
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   ScrollView,
   Text,
   TouchableOpacity,
   View
 } from "react-native";
+import { useSelector } from "react-redux";
+import { GetAvailability } from "../lib/services/availabilityService";
 
 export default function AvailabilityScreen() {
   const router = useRouter();
+
+  const user = useSelector((state) => state.auth.user)
+
+  const [AvailabiltyData, setAvailabiltyData] = useState([])
+
+  const FetchAvailabilty = async () => {
+    const data = await GetAvailability(user.id)
+    if (data) {
+
+      setAvailabiltyData(data)
+    }
+  }
+
+  useEffect(() => {
+    FetchAvailabilty()
+  }, [])
 
   return (
     <View className="flex-1 bg-[#F8FAFC]">
@@ -38,27 +57,30 @@ export default function AvailabilityScreen() {
           </Text>
 
           {/* Single Static Availability Card */}
-          <View className="bg-white rounded-[24px] p-5 mb-4 border border-gray-50 shadow-sm flex-row justify-between items-center">
-            <TouchableOpacity
-              onPress={() => router.push("/editSchedule")}
-              activeOpacity={0.7}
-              className="flex-1 pr-4"
-            >
-              <View className="flex-row items-center mb-1">
-                <Text className="text-gray-900 text-lg font-bold mr-2">Working hours</Text>
-                <Feather name="star" size={16} color="#FBBF24" fill="#FBBF24" />
-              </View>
-              <Text className="text-gray-500 text-sm leading-snug">Mon, Tue, Wed, Thu, Fri, 9:00am - 5:00pm</Text>
-            </TouchableOpacity>
+          {AvailabiltyData.map((item) => (
+            <View key={item.id}
+              className="bg-white rounded-[24px] p-5 mb-4 border border-gray-50 shadow-sm flex-row justify-between items-center">
+              <TouchableOpacity
+                onPress={() => router.push("/editSchedule")}
+                activeOpacity={0.7}
+                className="flex-1 pr-4"
+              >
+                <View className="flex-row items-center mb-1">
+                  <Text className="text-gray-900 text-[18px] font-bold mr-2">{item.name}</Text>
+                </View>
+                <Text className="text-gray-500 text-[14px] font-semibold leading-snug">{item.availability_days.map((day) => day.day + " , ")}</Text>
 
-            {/* Static Action Button */}
-            <TouchableOpacity
-              activeOpacity={0.7}
-              className="w-8 h-8 rounded-full bg-gray-50 items-center justify-center border border-gray-100"
-            >
-              <Feather name="more-vertical" size={18} color="#4B5563" />
-            </TouchableOpacity>
-          </View>
+              </TouchableOpacity>
+
+              {/* Static Action Button */}
+              <TouchableOpacity
+                activeOpacity={0.7}
+                className="w-8 h-8 rounded-full bg-gray-50 items-center justify-center border border-gray-100"
+              >
+                <Feather name="more-vertical" size={18} color="#4B5563" />
+              </TouchableOpacity>
+            </View>
+          ))}
 
           {/* Create New Schedule Button */}
           <TouchableOpacity

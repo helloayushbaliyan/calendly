@@ -23,7 +23,6 @@ export default function CreateScheduleScreen() {
 
 
   const user = useSelector((state) => state.auth.user)
-  console.log(user.id);
 
 
   // Static weekday config
