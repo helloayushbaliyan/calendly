@@ -2,6 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -10,13 +11,20 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { scheduleSchema } from "../utils/scheduleSchema";
+import { useSelector } from "react-redux";
 import TimePickerSheet from "../components/TimePickerSheet";
+import { saveAvailability } from "../lib/services/availabilityService";
+import { scheduleSchema } from "../utils/scheduleSchema";
 
 export default function CreateScheduleScreen() {
   const router = useRouter();
   const timePickerSheetRef = useRef(null);
   const [errors, setErrors] = useState({});
+
+
+  const user = useSelector((state) => state.auth.user)
+  console.log(user.id);
+
 
   // Static weekday config
   const weekdays = [
@@ -73,7 +81,7 @@ export default function CreateScheduleScreen() {
     setSelectDay(null)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const result = scheduleSchema.safeParse(availability);
     if (!result.success) {
       const formattedErrors = {};
@@ -84,8 +92,19 @@ export default function CreateScheduleScreen() {
       return;
     }
     setErrors({});
-    console.log(availability);
-    router.back();
+
+    const res = await saveAvailability(
+      availability, user.id
+    )
+
+    if (!res) {
+      Alert.alert("Error", "Failed to save availability")
+    }
+    else {
+      Alert.alert("Success", "Availability saved successfully")
+      router.back()
+    }
+
   }
 
 
