@@ -8,7 +8,7 @@ import {
   View
 } from "react-native";
 import { useSelector } from "react-redux";
-import { GetAvailability } from "../lib/services/availabilityService";
+import { GetAvailability, RemoveSchedule } from "../lib/services/availabilityService";
 
 export default function AvailabilityScreen() {
   const router = useRouter();
@@ -17,9 +17,12 @@ export default function AvailabilityScreen() {
 
   const [AvailabiltyData, setAvailabiltyData] = useState([])
 
+  const [ActiveCarsId, setActiveCarsId] = useState()
+
   const FetchAvailabilty = async () => {
     const data = await GetAvailability(user.id)
     if (data) {
+      console.log(data);
 
       setAvailabiltyData(data)
     }
@@ -32,6 +35,13 @@ export default function AvailabilityScreen() {
       }
     }, [user?.id])
   );
+
+
+  const handleRemoveSchedule = async (id) => {
+    const data = await RemoveSchedule(id)
+    FetchAvailabilty()
+
+  }
 
   return (
     <View className="flex-1 bg-[#F8FAFC]">
@@ -63,6 +73,7 @@ export default function AvailabilityScreen() {
           {/* Single Static Availability Card */}
           {AvailabiltyData.map((item) => (
             <View key={item.id}
+              style={{ zIndex: ActiveCarsId === item.id ? 50 : 1 }}
               className="bg-white rounded-[24px] p-5 mb-4 border border-gray-50 shadow-sm flex-row justify-between items-center">
               <TouchableOpacity
                 onPress={() => router.push("/editSchedule")}
@@ -76,13 +87,44 @@ export default function AvailabilityScreen() {
 
               </TouchableOpacity>
 
-              {/* Static Action Button */}
-              <TouchableOpacity
-                activeOpacity={0.7}
-                className="w-8 h-8 rounded-full bg-gray-50 items-center justify-center border border-gray-100"
-              >
-                <Feather name="more-vertical" size={18} color="#4B5563" />
-              </TouchableOpacity>
+              {/* Action Button and Options Menu */}
+              <View className="relative">
+                <TouchableOpacity
+                  onPress={() => setActiveCarsId(ActiveCarsId === item.id ? null : item.id)}
+                  activeOpacity={0.7}
+                  className="w-8 h-8 rounded-full bg-gray-50 items-center justify-center border border-gray-100"
+                >
+                  <Feather name="more-vertical" size={18} color="#4B5563" />
+                </TouchableOpacity>
+
+                {ActiveCarsId === item.id && (
+                  <View className="absolute right-[25px] top-[10px] p-4 bg-white z-50 rounded-[24px] border border-gray-100 shadow-md min-w-[100px]">
+                    <TouchableOpacity
+                      onPress={() => {
+                        setActiveCarsId(null);
+                        router.push("/editSchedule");
+                      }}
+                      activeOpacity={0.7}
+                      className="flex-row items-center gap-2 mb-3"
+                    >
+                      <Feather name="edit-2" size={18} color="#4B5563" />
+                      <Text className="text-gray-700 font-medium">Edit</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={() => {
+                        setActiveCarsId(null);
+                        handleRemoveSchedule(item.id)
+                      }}
+                      activeOpacity={0.7}
+                      className="flex-row items-center gap-2"
+                    >
+                      <Feather name="trash-2" size={18} color="#EF4444" />
+                      <Text className="text-rose-600 font-medium">Delete</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
             </View>
           ))}
 
