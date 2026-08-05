@@ -74,11 +74,11 @@ export default function TabLayout() {
         />
 
         <Tabs.Screen
-          name="calender"
+          name="events"
           options={{
-            title: "Calendar",
+            title: "Events",
             tabBarIcon: ({ color }) => (
-              <Entypo name="briefcase" size={24} color={color} />
+              <Entypo name="list" size={24} color={color} />
             ),
           }}
         />
@@ -104,21 +104,21 @@ export default function TabLayout() {
         />
 
         <Tabs.Screen
-          name="contacts"
+          name="calender"
           options={{
-            title: "=Contacts",
+            title: "Calendar",
             tabBarIcon: ({ color }) => (
-              <Entypo name="users" size={24} color={color} />
+              <Entypo name="briefcase" size={24} color={color} />
             ),
           }}
         />
 
         <Tabs.Screen
-          name="alert"
+          name="contacts"
           options={{
-            title: "Alert",
+            title: "Contacts",
             tabBarIcon: ({ color }) => (
-              <Entypo name="bell" size={24} color={color} />
+              <Entypo name="users" size={24} color={color} />
             ),
           }}
         />

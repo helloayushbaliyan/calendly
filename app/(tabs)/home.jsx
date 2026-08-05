@@ -132,7 +132,11 @@ const Home = () => {
               </Text>
             </View>
           </View>
-          <TouchableOpacity className="w-10 h-10 bg-white/10 rounded-full items-center justify-center">
+          <TouchableOpacity 
+            onPress={() => route.push("/alert")}
+            activeOpacity={0.7}
+            className="w-10 h-10 bg-white/10 rounded-full items-center justify-center"
+          >
             <Feather name="bell" size={20} color="#FFFFFF" />
             <View className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-[#4F46E5]" />
           </TouchableOpacity>

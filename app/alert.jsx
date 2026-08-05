@@ -1,7 +1,10 @@
 import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 const AlertScreen = () => {
+  const router = useRouter();
+  
   const notifications = [
     {
       id: 1,
@@ -36,7 +39,15 @@ const AlertScreen = () => {
       {/* Premium Header */}
       <View className="bg-[#4F46E5] rounded-b-[40px] px-6 pt-16 pb-8 mb-6 shadow-md shadow-indigo-500/20">
         <View className="flex-row items-center justify-between">
-          <Text className="text-[28px] font-bold text-white">Notifications</Text>
+          <View className="flex-row items-center">
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className="w-10 h-10 bg-white/10 rounded-full items-center justify-center mr-4"
+            >
+              <Feather name="arrow-left" size={20} color="white" />
+            </TouchableOpacity>
+            <Text className="text-[24px] font-bold text-white">Notifications</Text>
+          </View>
           <TouchableOpacity className="w-10 h-10 bg-white/10 rounded-full items-center justify-center">
             <Feather name="sliders" size={20} color="white" />
           </TouchableOpacity>

@@ -100,6 +100,7 @@ function AppLayoutInner() {
           <Stack.Screen name="contactDetails" />
           <Stack.Screen name="availability" />
           <Stack.Screen name="createSchedule" />
+          <Stack.Screen name="alert" />
         </Stack>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>
