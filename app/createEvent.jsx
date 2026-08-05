@@ -7,14 +7,13 @@ import {
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 
 /**
@@ -34,7 +33,7 @@ export default function CreateEvent() {
   // Inputs State
   const [eventName, setEventName] = useState("");
   const [description, setDescription] = useState("");
-  const [selectedDuration, setSelectedDuration] = useState("30 min");
+  const [selectedDuration, setSelectedDuration] = useState(30);
   const [selectedLocation, setSelectedLocation] = useState(null); // { id, name, icon, iconColor }
 
   // Bottom Sheet Ref for Location Apps
@@ -96,22 +95,31 @@ export default function CreateEvent() {
     },
   ];
 
+
+
+  const handleCreate = () => {
+    router.back()
+  };
+
+
+  const [eventData, setEventData] = useState({
+    name: "",
+    description: "",
+    duration: "",
+    location: "",
+    availabilityId: "",
+  })
+
+
+
   const handleSelectLocation = (app) => {
     setSelectedLocation(app);
+    setEventData({ ...eventData, location: app.name })
     locationSheetRef.current?.dismiss();
   };
 
-  const handleCreate = () => {
-    if (!eventName.trim()) {
-      Alert.alert("Required Info", "Please enter an event name.");
-      return;
-    }
-    Alert.alert(
-      "Success 🎉",
-      `Event "${eventName}" has been scheduled successfully!`,
-      [{ text: "Great!", onPress: () => router.back() }]
-    );
-  };
+
+
 
   return (
     <View className="flex-1 bg-[#F8FAFC]">
@@ -149,8 +157,8 @@ export default function CreateEvent() {
               EVENT NAME
             </Text>
             <TextInput
-              value={eventName}
-              onChangeText={setEventName}
+              value={eventData.name}
+              onChangeText={(value) => setEventData({ ...eventData, name: value })}
               placeholder="e.g. Discovery Call"
               placeholderTextColor="#94a3b8"
               className="bg-gray-50/50 border border-gray-100 rounded-[16px] p-4 text-[15px] text-gray-800 mb-4 focus:border-[#4F46E5]"
@@ -161,8 +169,8 @@ export default function CreateEvent() {
               DESCRIPTION
             </Text>
             <TextInput
-              value={description}
-              onChangeText={setDescription}
+              value={eventData.description}
+              onChangeText={(value) => setEventData({ ...eventData, description: value })}
               placeholder="Briefly describe this event type..."
               placeholderTextColor="#94a3b8"
               multiline
@@ -183,12 +191,12 @@ export default function CreateEvent() {
               DURATION
             </Text>
             <View className="flex-row flex-wrap gap-3 mb-6">
-              {["15 min", "30 min", "45 min", "60 min"].map((dur) => {
-                const isActive = selectedDuration === dur;
+              {[14, 30, 45, 60].map((dur) => {
+                const isActive = eventData.duration === dur;
                 return (
                   <TouchableOpacity
                     key={dur}
-                    onPress={() => setSelectedDuration(dur)}
+                    onPress={() => setEventData({ ...eventData, duration: dur })}
                     activeOpacity={0.7}
                     className={`px-5 py-3 rounded-[16px] border ${isActive
                       ? "border-[#4F46E5] bg-indigo-50/70"
@@ -199,7 +207,7 @@ export default function CreateEvent() {
                       className={`text-[14px] font-semibold ${isActive ? "text-[#4F46E5]" : "text-slate-600"
                         }`}
                     >
-                      {dur}
+                      {dur} min
                     </Text>
                   </TouchableOpacity>
                 );
@@ -222,12 +230,12 @@ export default function CreateEvent() {
                   color={selectedLocation ? selectedLocation.iconColor : "#94a3b8"}
                 />
                 <Text
-                  className={`text-[15px] ml-3 flex-1 ${selectedLocation ? "text-slate-800 font-semibold" : "text-slate-400"
+                  className={`text-[15px] ml-3 flex-1 ${eventData.location ? "text-slate-800 font-semibold" : "text-slate-400"
                     }`}
                   numberOfLines={1}
                 >
-                  {selectedLocation
-                    ? `${selectedLocation.name} selected`
+                  {eventData.location
+                    ? `${eventData.location}`
                     : "Google Meet, Zoom, etc."}
                 </Text>
               </View>
@@ -240,6 +248,7 @@ export default function CreateEvent() {
             </Text>
             <TouchableOpacity
               activeOpacity={0.7}
+              onPress={() => router.push("/selectAvailability")}
               className="bg-gray-50/50 border border-gray-100 rounded-[16px] p-4 flex-row items-center justify-between"
             >
               <View className="flex-row items-center flex-1">
