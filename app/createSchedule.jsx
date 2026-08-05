@@ -2,6 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -21,6 +22,7 @@ export default function CreateScheduleScreen() {
   const timePickerSheetRef = useRef(null);
   const [errors, setErrors] = useState({});
 
+  const [IsLoading, setIsLoading] = useState(false)
 
   const user = useSelector((state) => state.auth.user)
 
@@ -81,6 +83,8 @@ export default function CreateScheduleScreen() {
   }
 
   const handleSubmit = async () => {
+
+    setIsLoading(true)
     const result = scheduleSchema.safeParse(availability);
     if (!result.success) {
       const formattedErrors = {};
@@ -88,6 +92,7 @@ export default function CreateScheduleScreen() {
         formattedErrors[issue.path[0]] = issue.message;
       });
       setErrors(formattedErrors);
+      setIsLoading(false)
       return;
     }
     setErrors({});
@@ -98,10 +103,12 @@ export default function CreateScheduleScreen() {
 
     if (!res) {
       Alert.alert("Error", "Failed to save availability")
+      setIsLoading(false)
     }
     else {
       Alert.alert("Success", "Availability saved successfully")
       router.back()
+      setIsLoading(false)
     }
 
   }
@@ -255,7 +262,11 @@ export default function CreateScheduleScreen() {
             onPress={handleSubmit}
             className="flex-1 bg-[#4F46E5] py-4 rounded-full items-center justify-center active:bg-indigo-700"
           >
-            <Text className="text-white text-sm font-bold">Save</Text>
+
+            {IsLoading ?
+              (<ActivityIndicator color="white" />)
+              : (<Text className="text-white text-sm font-bold">Save</Text>
+              )}
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
