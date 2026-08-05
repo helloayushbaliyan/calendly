@@ -5,7 +5,7 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -135,7 +135,7 @@ export default function CreateEvent() {
 
         <ScrollView
           className="flex-1 px-6"
-          contentContainerStyle={{ paddingBottom: 60 }}
+          contentContainerStyle={{ paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
         >
           {/* Card 1: Basic Information */}
@@ -179,10 +179,10 @@ export default function CreateEvent() {
             </Text>
 
             {/* Duration Chips */}
-            <Text className="text-[11px] font-bold text-gray-400 tracking-wider mb-2">
+            <Text className="text-[12px] font-bold text-gray-400 tracking-wider mb-3">
               DURATION
             </Text>
-            <View className="flex-row flex-wrap gap-2 mb-5">
+            <View className="flex-row flex-wrap gap-3 mb-6">
               {["15 min", "30 min", "45 min", "60 min"].map((dur) => {
                 const isActive = selectedDuration === dur;
                 return (
@@ -190,16 +190,14 @@ export default function CreateEvent() {
                     key={dur}
                     onPress={() => setSelectedDuration(dur)}
                     activeOpacity={0.7}
-                    className={`px-4 py-2.5 rounded-full border ${
-                      isActive
-                        ? "border-[#4F46E5] bg-indigo-50/70"
-                        : "border-gray-100 bg-gray-50/50"
-                    }`}
+                    className={`px-5 py-3 rounded-[16px] border ${isActive
+                      ? "border-[#4F46E5] bg-indigo-50/70"
+                      : "border-gray-100 bg-gray-50/50"
+                      }`}
                   >
                     <Text
-                      className={`text-[14px] font-semibold ${
-                        isActive ? "text-[#4F46E5]" : "text-gray-500"
-                      }`}
+                      className={`text-[14px] font-semibold ${isActive ? "text-[#4F46E5]" : "text-slate-600"
+                        }`}
                     >
                       {dur}
                     </Text>
@@ -209,7 +207,7 @@ export default function CreateEvent() {
             </View>
 
             {/* Meeting Link / Location Selection */}
-            <Text className="text-[11px] font-bold text-gray-400 tracking-wider mb-2">
+            <Text className="text-[12px] font-bold text-gray-400 tracking-wider mb-3">
               MEETING LINK / LOCATION
             </Text>
             <TouchableOpacity
@@ -224,9 +222,8 @@ export default function CreateEvent() {
                   color={selectedLocation ? selectedLocation.iconColor : "#94a3b8"}
                 />
                 <Text
-                  className={`text-[15px] ml-3 flex-1 ${
-                    selectedLocation ? "text-slate-800 font-semibold" : "text-slate-400"
-                  }`}
+                  className={`text-[15px] ml-3 flex-1 ${selectedLocation ? "text-slate-800 font-semibold" : "text-slate-400"
+                    }`}
                   numberOfLines={1}
                 >
                   {selectedLocation
@@ -236,20 +233,39 @@ export default function CreateEvent() {
               </View>
               <Feather name="chevron-down" size={16} color="#94a3b8" />
             </TouchableOpacity>
-          </View>
 
-          {/* Premium Indigo Create Button - Matched Card design & shadows */}
+            {/* Availability */}
+            <Text className="text-[12px] font-bold text-gray-400 tracking-wider mt-6 mb-3">
+              AVAILABILITY
+            </Text>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              className="bg-gray-50/50 border border-gray-100 rounded-[16px] p-4 flex-row items-center justify-between"
+            >
+              <View className="flex-row items-center flex-1">
+                <Feather name="calendar" size={20} color="#94a3b8" />
+                <Text className="text-[15px] ml-3 flex-1 text-slate-800 font-semibold" numberOfLines={1}>
+                  Mon, Wed, Fri, 9 AM - 5 PM, +1 more time
+                </Text>
+              </View>
+              <Feather name="chevron-right" size={16} color="#94a3b8" />
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+
+        {/* Sticky Bottom Create Button */}
+        <View className="px-6 pb-8 pt-4 bg-[#F8FAFC]">
           <TouchableOpacity
             onPress={handleCreate}
             activeOpacity={0.8}
-            className="bg-[#4F46E5] rounded-[24px] py-4 px-6 shadow-lg shadow-indigo-500/30 flex-row items-center justify-center mb-6 gap-x-2"
+            className="bg-[#4F46E5] rounded-[20px] py-4 shadow-lg shadow-indigo-500/30 flex-row items-center justify-center gap-x-2"
           >
-            <Text className="text-white font-bold text-[16px] tracking-wide">
+            <Text className="text-white font-bold text-[17px] tracking-wide">
               Create Event Type
             </Text>
             <Feather name="arrow-right" size={18} color="white" />
           </TouchableOpacity>
-        </ScrollView>
+        </View>
 
         {/* Location Meeting Apps Bottom Sheet */}
         <BottomSheetModal
