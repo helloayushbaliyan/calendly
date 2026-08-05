@@ -31,16 +31,15 @@ export default function CreateEvent() {
   const router = useRouter();
 
   // Inputs State
-  const [eventName, setEventName] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedDuration, setSelectedDuration] = useState(30);
   const [selectedLocation, setSelectedLocation] = useState(null); // { id, name, icon, iconColor }
 
-  // Bottom Sheet Ref for Location Apps
+  // Bottom Sheet Refs
   const locationSheetRef = useRef(null);
+  const availabilitySheetRef = useRef(null);
 
-  // Bottom Sheet Snap Points (35% screen height)
+  // Bottom Sheet Snap Points
   const snapPoints = useMemo(() => ["35%"], []);
+  const availabilitySnapPoints = useMemo(() => ["55%"], []);
 
   // Backdrop component for location bottom sheet
   const renderBackdrop = useCallback(
@@ -95,12 +94,27 @@ export default function CreateEvent() {
     },
   ];
 
-
-
-  const handleCreate = () => {
-    router.back()
-  };
-
+  // Dummy availability schedules
+  const availabilitySchedules = [
+    {
+      id: "1",
+      name: "Working hours",
+      days: "Mon, Wed, Fri, 9 AM – 5 PM, +1 more time",
+      dateSpecific: "0 instances of date-specific hours",
+    },
+    {
+      id: "2",
+      name: "Freelance",
+      days: "Mon, Tue, Wed, Thu, Fri, Sat, Sun, 9 AM – 5 PM",
+      dateSpecific: "0 instances of date-specific hours",
+    },
+    {
+      id: "3",
+      name: "Maths class",
+      days: "Mon, Wed, 10 AM – 12 PM",
+      dateSpecific: "2 instances of date-specific hours",
+    },
+  ];
 
   const [eventData, setEventData] = useState({
     name: "",
@@ -108,15 +122,23 @@ export default function CreateEvent() {
     duration: "",
     location: "",
     availabilityId: "",
-  })
+  });
 
-
+  const handleCreate = () => {
+    router.back();
+  };
 
   const handleSelectLocation = (app) => {
     setSelectedLocation(app);
-    setEventData({ ...eventData, location: app.name })
+    setEventData({ ...eventData, location: app.name });
     locationSheetRef.current?.dismiss();
   };
+
+  const handleSelectAvailability = (schedule) => {
+    setEventData({ ...eventData, availabilityId: schedule.id });
+    availabilitySheetRef.current?.dismiss();
+  };
+
 
 
 
@@ -248,16 +270,21 @@ export default function CreateEvent() {
             </Text>
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => router.push("/selectAvailability")}
+              onPress={() => availabilitySheetRef.current?.present()}
               className="bg-gray-50/50 border border-gray-100 rounded-[16px] p-4 flex-row items-center justify-between"
             >
               <View className="flex-row items-center flex-1">
-                <Feather name="calendar" size={20} color="#94a3b8" />
-                <Text className="text-[15px] ml-3 flex-1 text-slate-800 font-semibold" numberOfLines={1}>
-                  Mon, Wed, Fri, 9 AM - 5 PM, +1 more time
+                <Feather name="calendar" size={20} color={eventData.availabilityId ? "#4F46E5" : "#94a3b8"} />
+                <Text
+                  className={`text-[15px] ml-3 flex-1 ${eventData.availabilityId ? "text-slate-800 font-semibold" : "text-slate-400"}`}
+                  numberOfLines={1}
+                >
+                  {eventData.availabilityId
+                    ? availabilitySchedules.find((s) => s.id === eventData.availabilityId)?.days
+                    : "Choose a schedule..."}
                 </Text>
               </View>
-              <Feather name="chevron-right" size={16} color="#94a3b8" />
+              <Feather name="chevron-down" size={16} color="#94a3b8" />
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -323,6 +350,63 @@ export default function CreateEvent() {
                   <Feather name="chevron-right" size={14} color="#cbd5e1" />
                 </TouchableOpacity>
               ))}
+            </ScrollView>
+          </BottomSheetView>
+        </BottomSheetModal>
+
+        {/* Availability Schedule Bottom Sheet */}
+        <BottomSheetModal
+          ref={availabilitySheetRef}
+          index={0}
+          snapPoints={availabilitySnapPoints}
+          backdropComponent={renderBackdrop}
+          backgroundStyle={{
+            backgroundColor: "#ffffff",
+            borderTopLeftRadius: 28,
+            borderTopRightRadius: 28,
+          }}
+          handleIndicatorStyle={{
+            backgroundColor: "#cbd5e1",
+            width: 36,
+            height: 4,
+          }}
+        >
+          <BottomSheetView className="flex-1 px-6 bg-white">
+            <Text className="text-[18px] font-bold text-slate-800 mt-2 mb-4">
+              Select Availability
+            </Text>
+
+            <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+              {availabilitySchedules.map((schedule) => {
+                const isSelected = eventData.availabilityId === schedule.id;
+                return (
+                  <TouchableOpacity
+                    key={schedule.id}
+                    activeOpacity={0.7}
+                    onPress={() => handleSelectAvailability(schedule)}
+                    className={`p-4 mb-3 rounded-[20px] border ${isSelected
+                      ? "border-[#4F46E5] bg-indigo-50/50"
+                      : "border-slate-100 bg-slate-50/50"
+                      }`}
+                  >
+                    <View className="flex-row items-center justify-between mb-1">
+                      <Text className={`text-[15px] font-bold ${isSelected ? "text-[#4F46E5]" : "text-slate-800"
+                        }`}>
+                        {schedule.name}
+                      </Text>
+                      {isSelected && (
+                        <Feather name="check" size={16} color="#4F46E5" />
+                      )}
+                    </View>
+                    <Text className="text-[13px] text-slate-500 leading-snug">
+                      {schedule.days}
+                    </Text>
+                    <Text className="text-[12px] text-slate-400 mt-1">
+                      {schedule.dateSpecific}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </ScrollView>
           </BottomSheetView>
         </BottomSheetModal>
