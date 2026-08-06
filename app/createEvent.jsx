@@ -5,8 +5,9 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  BackHandler,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -36,6 +37,25 @@ export default function CreateEvent() {
   // Bottom Sheet Refs
   const locationSheetRef = useRef(null);
   const availabilitySheetRef = useRef(null);
+
+  // Track which bottom sheet is currently open
+  const [openSheet, setOpenSheet] = useState(null); // 'location' | 'availability' | null
+
+  // Intercept hardware back button to close the open bottom sheet
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (openSheet === 'location') {
+        locationSheetRef.current?.dismiss();
+        return true; // prevent default back navigation
+      }
+      if (openSheet === 'availability') {
+        availabilitySheetRef.current?.dismiss();
+        return true;
+      }
+      return false; // let default back happen when no sheet is open
+    });
+    return () => backHandler.remove();
+  }, [openSheet]);
 
   // Bottom Sheet Snap Points
   const snapPoints = useMemo(() => ["35%"], []);
@@ -136,7 +156,6 @@ export default function CreateEvent() {
 
   const handleSelectAvailability = (schedule) => {
     setEventData({ ...eventData, availabilityId: schedule.id });
-    availabilitySheetRef.current?.dismiss();
   };
 
 
@@ -309,6 +328,11 @@ export default function CreateEvent() {
           index={0}
           snapPoints={snapPoints}
           backdropComponent={renderBackdrop}
+          enablePanDownToClose={true}
+          onChange={(index) => {
+            if (index === -1) setOpenSheet(null);
+            else setOpenSheet('location');
+          }}
           backgroundStyle={{
             backgroundColor: "#ffffff",
             borderTopLeftRadius: 28,
@@ -321,9 +345,18 @@ export default function CreateEvent() {
           }}
         >
           <BottomSheetView className="flex-1 px-6 bg-white">
-            <Text className="text-[18px] font-bold text-slate-800 mt-2 mb-4">
-              Select Meeting Location
-            </Text>
+            <View className="flex-row items-center justify-between mt-2 mb-4">
+              <Text className="text-[18px] font-bold text-slate-800">
+                Select Meeting Location
+              </Text>
+              <TouchableOpacity
+                onPress={() => locationSheetRef.current?.dismiss()}
+                activeOpacity={0.7}
+                className="w-8 h-8 rounded-full bg-slate-100 items-center justify-center"
+              >
+                <Feather name="x" size={18} color="#64748b" />
+              </TouchableOpacity>
+            </View>
 
             <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
               {meetingApps.map((app) => (
@@ -360,6 +393,11 @@ export default function CreateEvent() {
           index={0}
           snapPoints={availabilitySnapPoints}
           backdropComponent={renderBackdrop}
+          enablePanDownToClose={true}
+          onChange={(index) => {
+            if (index === -1) setOpenSheet(null);
+            else setOpenSheet('availability');
+          }}
           backgroundStyle={{
             backgroundColor: "#ffffff",
             borderTopLeftRadius: 28,
@@ -372,9 +410,18 @@ export default function CreateEvent() {
           }}
         >
           <BottomSheetView className="flex-1 px-6 bg-white">
-            <Text className="text-[18px] font-bold text-slate-800 mt-2 mb-4">
-              Select Availability
-            </Text>
+            <View className="flex-row items-center justify-between mt-2 mb-4">
+              <Text className="text-[18px] font-bold text-slate-800">
+                Select Availability
+              </Text>
+              <TouchableOpacity
+                onPress={() => availabilitySheetRef.current?.dismiss()}
+                activeOpacity={0.7}
+                className="w-8 h-8 rounded-full bg-slate-100 items-center justify-center"
+              >
+                <Feather name="x" size={18} color="#64748b" />
+              </TouchableOpacity>
+            </View>
 
             <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
               {availabilitySchedules.map((schedule) => {
