@@ -16,30 +16,20 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { useSelector } from "react-redux";
+import { GetAvailability } from "../lib/services/availabilityService";
 
-/**
- * CreateEvent Screen
- * 
- * Beautifully styled to align with the Contacts screen layout and brand identity.
- * 
- * Brand Design Match:
- * 1. Clean background [#F8FAFC].
- * 2. Premium unified Header with [#4F46E5] Indigo theme and deep [rounded-b-[40px]] border-radius.
- * 3. Elevated cards with [rounded-[24px]] borders and gray-50 outline.
- * 4. Custom selector chips and CTA buttons mirroring the exact rounded shape.
- */
+
 export default function CreateEvent() {
   const router = useRouter();
 
-  // Inputs State
-  const [selectedLocation, setSelectedLocation] = useState(null); // { id, name, icon, iconColor }
 
   // Bottom Sheet Refs
   const locationSheetRef = useRef(null);
   const availabilitySheetRef = useRef(null);
 
   // Track which bottom sheet is currently open
-  const [openSheet, setOpenSheet] = useState(null); // 'location' | 'availability' | null
+  const [openSheet, setOpenSheet] = useState(null);
 
   // Intercept hardware back button to close the open bottom sheet
   useEffect(() => {
@@ -74,8 +64,9 @@ export default function CreateEvent() {
     ),
     []
   );
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
-  // Meeting app options
+
   const meetingApps = [
     {
       id: "google_meet",
@@ -114,27 +105,22 @@ export default function CreateEvent() {
     },
   ];
 
-  // Dummy availability schedules
-  const availabilitySchedules = [
-    {
-      id: "1",
-      name: "Working hours",
-      days: "Mon, Wed, Fri, 9 AM – 5 PM, +1 more time",
-      dateSpecific: "0 instances of date-specific hours",
-    },
-    {
-      id: "2",
-      name: "Freelance",
-      days: "Mon, Tue, Wed, Thu, Fri, Sat, Sun, 9 AM – 5 PM",
-      dateSpecific: "0 instances of date-specific hours",
-    },
-    {
-      id: "3",
-      name: "Maths class",
-      days: "Mon, Wed, 10 AM – 12 PM",
-      dateSpecific: "2 instances of date-specific hours",
-    },
-  ];
+
+
+  const [availabilitySchedules, setAvailabilitySchedules] = useState([])
+
+  const user = useSelector((state) => state.auth.user)
+
+  const FetchAvailabilty = async () => {
+    const data = await GetAvailability(user.id)
+    if (data) {
+      setAvailabilitySchedules(data)
+    }
+  }
+  useEffect(() => {
+    FetchAvailabilty()
+  }, [])
+
 
   const [eventData, setEventData] = useState({
     name: "",
@@ -156,6 +142,8 @@ export default function CreateEvent() {
 
   const handleSelectAvailability = (schedule) => {
     setEventData({ ...eventData, availabilityId: schedule.id });
+    console.log(eventData);
+
   };
 
 
@@ -299,7 +287,7 @@ export default function CreateEvent() {
                   numberOfLines={1}
                 >
                   {eventData.availabilityId
-                    ? availabilitySchedules.find((s) => s.id === eventData.availabilityId)?.days
+                    ? availabilitySchedules.find((s) => s.id === eventData.availabilityId)?.name
                     : "Choose a schedule..."}
                 </Text>
               </View>
@@ -366,11 +354,10 @@ export default function CreateEvent() {
                     key={app.id}
                     activeOpacity={0.7}
                     onPress={() => handleSelectLocation(app)}
-                    className={`flex-row items-center p-4 mb-3 rounded-[20px] border ${
-                      isSelected
-                        ? "border-[#4F46E5] bg-indigo-50/50"
-                        : "border-slate-100 bg-slate-50/50"
-                    }`}
+                    className={`flex-row items-center p-4 mb-3 rounded-[20px] border ${isSelected
+                      ? "border-[#4F46E5] bg-indigo-50/50"
+                      : "border-slate-100 bg-slate-50/50"
+                      }`}
                   >
                     <View
                       className="w-10 h-10 rounded-full items-center justify-center"
@@ -454,11 +441,8 @@ export default function CreateEvent() {
                         <Feather name="check" size={16} color="#4F46E5" />
                       )}
                     </View>
-                    <Text className="text-[13px] text-slate-500 leading-snug">
-                      {schedule.days}
-                    </Text>
-                    <Text className="text-[12px] text-slate-400 mt-1">
-                      {schedule.dateSpecific}
+                    <Text className="text-[14px] text-slate-500 leading-snug">
+                      {schedule.availability_days && schedule.availability_days.map((day) => day.day + " , ")}
                     </Text>
                   </TouchableOpacity>
                 );
