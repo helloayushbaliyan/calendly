@@ -4,7 +4,7 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
@@ -14,38 +14,61 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSelector } from "react-redux";
+import { GetEventType } from "../../lib/services/eventTypeService";
 
 const EventsScreen = () => {
   const router = useRouter();
   const eventDetailsSheetRef = useRef(null);
 
   // List of events
-  const events = [
-    {
-      id: 1,
-      title: "freelance",
-      subtitle: "One-on-one, Multiple durations",
-      time: "Mon, Tue, Wed, Thu, Fri, Sat, Sun, 9 AM - 5 PM",
-      initials: "HA",
-      color: "#10B981", // Green
-    },
-    {
-      id: 2,
-      title: "maths class",
-      subtitle: "One-on-one, Multiple durations",
-      time: "Mon, Wed, Fri, 9 AM - 5 PM",
-      initials: "MC",
-      color: "#F59E0B", // Orange
-    },
-    {
-      id: 3,
-      title: "30 Minute Meeting",
-      subtitle: "One-on-one, Multiple durations",
-      time: "Mon, Wed, Fri, 9 AM - 5 PM, +1 more time",
-      initials: "30",
-      color: "#8B5CF6", // Purple
-    },
-  ];
+  // const events = [
+  //   {
+  //     id: 1,
+  //     title: "freelance",
+  //     subtitle: "One-on-one, Multiple durations",
+  //     time: "Mon, Tue, Wed, Thu, Fri, Sat, Sun, 9 AM - 5 PM",
+  //     initials: "HA",
+  //     color: "#10B981", // Green
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "maths class",
+  //     subtitle: "One-on-one, Multiple durations",
+  //     time: "Mon, Wed, Fri, 9 AM - 5 PM",
+  //     initials: "MC",
+  //     color: "#F59E0B", // Orange
+  //   },
+  //   {
+  //     id: 3,
+  //     title: "30 Minute Meeting",
+  //     subtitle: "One-on-one, Multiple durations",
+  //     time: "Mon, Wed, Fri, 9 AM - 5 PM, +1 more time",
+  //     initials: "30",
+  //     color: "#8B5CF6", // Purple
+  //   },
+  // ];
+
+  const user = useSelector((state) => state.auth.user)
+
+  const [events, setEvents] = useState([])
+
+  const FetchEventType = async () => {
+    const eventtypes = await GetEventType(user.id)
+    if (eventtypes) {
+      console.log(eventtypes);
+
+      setEvents(eventtypes)
+    }
+
+  }
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.id) {
+        FetchEventType();
+      }
+    }, [user?.id])
+  );
 
   const [selectedEvent, setSelectedEvent] = useState(events[0]);
   const [isEventDetailsOpen, setIsEventDetailsOpen] = useState(false);
@@ -87,7 +110,7 @@ const EventsScreen = () => {
 
   const handleAction = (actionName) => {
     eventDetailsSheetRef.current?.dismiss();
-    Alert.alert("Success", `${actionName} selected for "${selectedEvent.title}"!`);
+    Alert.alert("Success", `${actionName} selected for "${selectedEvent?.title}"!`);
   };
 
   return (
@@ -105,7 +128,7 @@ const EventsScreen = () => {
         className="px-6"
       >
         <Text className="text-gray-400 text-[13px] font-bold tracking-wider mb-4">
-          YOUR EVENT TYPES ({events.length})
+          YOUR EVENT TYPES ({events?.length || 0})
         </Text>
 
         {/* List of Event Cards */}
@@ -123,10 +146,10 @@ const EventsScreen = () => {
                   {event.title}
                 </Text>
                 <Text className="text-[13px] text-gray-400 font-medium mb-2">
-                  {event.subtitle}
+                  {`${event.duration} mind . ${event.location_type}`}
                 </Text>
                 <Text className="text-[12px] text-gray-500 font-semibold" numberOfLines={1}>
-                  {event.time}
+                  {event.availability_schedules.name}
                 </Text>
               </View>
               <Feather name="chevron-right" size={20} color="#94A3B8" />
@@ -164,11 +187,11 @@ const EventsScreen = () => {
         <BottomSheetView className="flex-1 px-6 pt-4 bg-white">
           {/* Title */}
           <Text className="text-[22px] font-bold text-slate-800 mt-2 mb-1">
-            {selectedEvent.title}
+            {selectedEvent?.title}
           </Text>
-          {selectedEvent.subtitle && (
+          {selectedEvent?.subtitle && (
             <Text className="text-[13px] font-medium text-slate-400 mb-4">
-              {selectedEvent.subtitle}
+              {selectedEvent?.subtitle}
             </Text>
           )}
 

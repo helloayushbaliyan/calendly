@@ -7,6 +7,8 @@ import {
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   BackHandler,
   KeyboardAvoidingView,
   Platform,
@@ -18,6 +20,7 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { GetAvailability } from "../lib/services/availabilityService";
+import { SaveEventType } from "../lib/services/eventTypeService";
 import { eventTypeSchema } from "../utils/eventTypeSchema";
 
 
@@ -132,8 +135,10 @@ export default function CreateEvent() {
   });
 
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
+    setIsLoading(true)
     const result = eventTypeSchema.safeParse(eventData);
     if (!result.success) {
       const fieldErrors = {};
@@ -144,11 +149,21 @@ export default function CreateEvent() {
         }
       });
       setErrors(fieldErrors);
+      setIsLoading(false)
       return;
     }
     setErrors({});
-    // TODO: submit eventData
-    router.back();
+
+    const saveEvent = await SaveEventType(eventData, user.id)
+    if (!saveEvent) {
+      Alert.alert("Error", "Failed to save event")
+      setIsLoading(false)
+    }
+    else {
+      Alert.alert("Success", "Event saved successfully")
+      router.back()
+      setIsLoading(false)
+    }
   };
 
   const handleSelectLocation = (app) => {
@@ -162,6 +177,8 @@ export default function CreateEvent() {
     console.log(eventData);
 
   };
+
+
 
 
 
@@ -247,7 +264,7 @@ export default function CreateEvent() {
               DURATION
             </Text>
             <View className="flex-row flex-wrap gap-3 mb-6">
-              {[14, 30, 45, 60].map((dur) => {
+              {[15, 30, 45, 60].map((dur) => {
                 const isActive = eventData.duration === dur;
                 return (
                   <TouchableOpacity
@@ -339,10 +356,19 @@ export default function CreateEvent() {
             activeOpacity={0.8}
             className="bg-[#4F46E5] rounded-[20px] py-4 shadow-lg shadow-indigo-500/30 flex-row items-center justify-center gap-x-2"
           >
-            <Text className="text-white font-bold text-[17px] tracking-wide">
-              Create Event Type
-            </Text>
-            <Feather name="arrow-right" size={18} color="white" />
+
+            {isLoading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <View className="flex-row items-center gap-x-2">
+                <Text className="text-white font-bold text-[17px] tracking-wide">
+                  Create Event Type
+                </Text>
+                <Feather name="arrow-right" size={18} color="white" />
+              </View>
+
+            )}
+
           </TouchableOpacity>
         </View>
 
