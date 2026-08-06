@@ -15,39 +15,13 @@ import {
   View,
 } from "react-native";
 import { useSelector } from "react-redux";
-import { GetEventType } from "../../lib/services/eventTypeService";
+import { GetEventType, RemoveEventType } from "../../lib/services/eventTypeService";
 
 const EventsScreen = () => {
   const router = useRouter();
   const eventDetailsSheetRef = useRef(null);
 
-  // List of events
-  // const events = [
-  //   {
-  //     id: 1,
-  //     title: "freelance",
-  //     subtitle: "One-on-one, Multiple durations",
-  //     time: "Mon, Tue, Wed, Thu, Fri, Sat, Sun, 9 AM - 5 PM",
-  //     initials: "HA",
-  //     color: "#10B981", // Green
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "maths class",
-  //     subtitle: "One-on-one, Multiple durations",
-  //     time: "Mon, Wed, Fri, 9 AM - 5 PM",
-  //     initials: "MC",
-  //     color: "#F59E0B", // Orange
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "30 Minute Meeting",
-  //     subtitle: "One-on-one, Multiple durations",
-  //     time: "Mon, Wed, Fri, 9 AM - 5 PM, +1 more time",
-  //     initials: "30",
-  //     color: "#8B5CF6", // Purple
-  //   },
-  // ];
+
 
   const user = useSelector((state) => state.auth.user)
 
@@ -113,6 +87,13 @@ const EventsScreen = () => {
     Alert.alert("Success", `${actionName} selected for "${selectedEvent?.title}"!`);
   };
 
+
+
+  const handleRemoveEventType = async (id) => {
+    const data = await RemoveEventType(id)
+    FetchEventType()
+    eventDetailsSheetRef.current?.dismiss();
+  }
   return (
     <View className="flex-1 bg-[#F8FAFC]">
       {/* Premium Indigo Header */}
@@ -189,9 +170,9 @@ const EventsScreen = () => {
           <Text className="text-[22px] font-bold text-slate-800 mt-2 mb-1">
             {selectedEvent?.title}
           </Text>
-          {selectedEvent?.subtitle && (
+          {selectedEvent?.duration && (
             <Text className="text-[13px] font-medium text-slate-400 mb-4">
-              {selectedEvent?.subtitle}
+              {`${selectedEvent?.duration} mind . ${selectedEvent?.location_type}`}
             </Text>
           )}
 
@@ -285,6 +266,18 @@ const EventsScreen = () => {
                   Edit event type
                 </Text>
               </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => handleRemoveEventType(selectedEvent.id)}
+                className="flex-row items-center py-3.5"
+              >
+                <Feather name="trash" size={22} color="#ef4444" />
+                <Text className="text-[16px] font-medium text-red-600 ml-4">
+                  Delete Event Type
+                </Text>
+              </TouchableOpacity>
+
             </View>
           </ScrollView>
         </BottomSheetView>

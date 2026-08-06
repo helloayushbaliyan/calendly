@@ -40,7 +40,6 @@ export default function AvailabilityScreen() {
   const handleRemoveSchedule = async (id) => {
     const data = await RemoveSchedule(id)
     FetchAvailabilty()
-
   }
 
   return (
