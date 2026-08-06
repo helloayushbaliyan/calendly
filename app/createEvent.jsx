@@ -359,30 +359,39 @@ export default function CreateEvent() {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-              {meetingApps.map((app) => (
-                <TouchableOpacity
-                  key={app.id}
-                  activeOpacity={0.7}
-                  onPress={() => handleSelectLocation(app)}
-                  className="flex-row items-center py-3 border-b border-slate-50"
-                >
-                  <View
-                    className="w-10 h-10 rounded-full items-center justify-center"
-                    style={{ backgroundColor: `${app.iconColor}15` }}
+              {meetingApps.map((app) => {
+                const isSelected = selectedLocation?.id === app.id;
+                return (
+                  <TouchableOpacity
+                    key={app.id}
+                    activeOpacity={0.7}
+                    onPress={() => handleSelectLocation(app)}
+                    className={`flex-row items-center p-4 mb-3 rounded-[20px] border ${
+                      isSelected
+                        ? "border-[#4F46E5] bg-indigo-50/50"
+                        : "border-slate-100 bg-slate-50/50"
+                    }`}
                   >
-                    <Feather name={app.icon} size={20} color={app.iconColor} />
-                  </View>
-                  <View className="flex-1 ml-4">
-                    <Text className="text-[15px] font-semibold text-slate-800">
-                      {app.name}
-                    </Text>
-                    <Text className="text-[12px] text-slate-400 mt-0.5" numberOfLines={1}>
-                      {app.description}
-                    </Text>
-                  </View>
-                  <Feather name="chevron-right" size={14} color="#cbd5e1" />
-                </TouchableOpacity>
-              ))}
+                    <View
+                      className="w-10 h-10 rounded-full items-center justify-center"
+                      style={{ backgroundColor: `${app.iconColor}15` }}
+                    >
+                      <Feather name={app.icon} size={20} color={app.iconColor} />
+                    </View>
+                    <View className="flex-1 ml-4">
+                      <Text className={`text-[15px] font-semibold ${isSelected ? "text-[#4F46E5]" : "text-slate-800"}`}>
+                        {app.name}
+                      </Text>
+                      <Text className="text-[12px] text-slate-400 mt-0.5" numberOfLines={1}>
+                        {app.description}
+                      </Text>
+                    </View>
+                    {isSelected && (
+                      <Feather name="check" size={16} color="#4F46E5" />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
             </ScrollView>
           </BottomSheetView>
         </BottomSheetModal>
