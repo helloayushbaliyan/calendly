@@ -18,6 +18,7 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { GetAvailability } from "../lib/services/availabilityService";
+import { eventTypeSchema } from "../utils/eventTypeSchema";
 
 
 export default function CreateEvent() {
@@ -130,7 +131,23 @@ export default function CreateEvent() {
     availabilityId: "",
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleCreate = () => {
+    const result = eventTypeSchema.safeParse(eventData);
+    if (!result.success) {
+      const fieldErrors = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0];
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = issue.message;
+        }
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+    setErrors({});
+    // TODO: submit eventData
     router.back();
   };
 
@@ -187,11 +204,16 @@ export default function CreateEvent() {
             </Text>
             <TextInput
               value={eventData.name}
-              onChangeText={(value) => setEventData({ ...eventData, name: value })}
+              onChangeText={(value) => {
+                setEventData({ ...eventData, name: value });
+              }}
               placeholder="e.g. Discovery Call"
               placeholderTextColor="#94a3b8"
-              className="bg-gray-50/50 border border-gray-100 rounded-[16px] p-4 text-[15px] text-gray-800 mb-4 focus:border-[#4F46E5]"
+              className={`bg-gray-50/50 border rounded-[16px] p-4 text-[15px] text-gray-800 ${errors.name ? 'border-red-400 mb-1' : 'border-gray-100 mb-4'} focus:border-[#4F46E5]`}
             />
+            {errors.name && (
+              <Text className="text-red-500 text-[12px] mb-3 ml-1">{errors.name}</Text>
+            )}
 
             {/* Description */}
             <Text className="text-[11px] font-bold text-gray-400 tracking-wider mb-2">
@@ -199,14 +221,19 @@ export default function CreateEvent() {
             </Text>
             <TextInput
               value={eventData.description}
-              onChangeText={(value) => setEventData({ ...eventData, description: value })}
+              onChangeText={(value) => {
+                setEventData({ ...eventData, description: value });
+              }}
               placeholder="Briefly describe this event type..."
               placeholderTextColor="#94a3b8"
               multiline
               numberOfLines={4}
               textAlignVertical="top"
-              className="bg-gray-50/50 border border-gray-100 rounded-[16px] p-4 text-[15px] text-gray-800 h-28 focus:border-[#4F46E5]"
+              className={`bg-gray-50/50 border rounded-[16px] p-4 text-[15px] text-gray-800 h-28 ${errors.description ? 'border-red-400' : 'border-gray-100'} focus:border-[#4F46E5]`}
             />
+            {errors.description && (
+              <Text className="text-red-500 text-[12px] mt-1 ml-1">{errors.description}</Text>
+            )}
           </View>
 
           {/* Card 2: Duration & Link */}
@@ -242,6 +269,9 @@ export default function CreateEvent() {
                 );
               })}
             </View>
+            {errors.duration && (
+              <Text className="text-red-500 text-[12px] -mt-4 mb-3 ml-1">{errors.duration}</Text>
+            )}
 
             {/* Meeting Link / Location Selection */}
             <Text className="text-[12px] font-bold text-gray-400 tracking-wider mb-3">
@@ -270,6 +300,9 @@ export default function CreateEvent() {
               </View>
               <Feather name="chevron-down" size={16} color="#94a3b8" />
             </TouchableOpacity>
+            {errors.location && (
+              <Text className="text-red-500 text-[12px] mt-1 ml-1">{errors.location}</Text>
+            )}
 
             {/* Availability */}
             <Text className="text-[12px] font-bold text-gray-400 tracking-wider mt-6 mb-3">
@@ -293,6 +326,9 @@ export default function CreateEvent() {
               </View>
               <Feather name="chevron-down" size={16} color="#94a3b8" />
             </TouchableOpacity>
+            {errors.availabilityId && (
+              <Text className="text-red-500 text-[12px] mt-1 ml-1">{errors.availabilityId}</Text>
+            )}
           </View>
         </ScrollView>
 
