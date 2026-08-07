@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { GetAvailableSlots } from "../lib/services/bookingServices";
 
 const GuestBookingScreen = () => {
     const router = useRouter();
@@ -15,6 +16,18 @@ const GuestBookingScreen = () => {
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [selectedDate, setSelectedDate] = useState('');
     console.log("selectedDate", selectedDate)
+
+    const [availableSlots, setAvailableSlots] = useState([])
+
+    const getAvailableSlots = async (dateString, eventId) => {
+        setSelectedDate(dateString)
+        const result = await GetAvailableSlots(eventId, dateString);
+        if (result) {
+            console.log("result", result);
+            setAvailableSlots(result.slots)
+        }
+
+    }
 
     return (
         <SafeAreaView className="flex-1 bg-white" edges={['top']}>
@@ -57,7 +70,7 @@ const GuestBookingScreen = () => {
                         <View className="rounded-[24px] overflow-hidden border border-slate-200 bg-white shadow-sm pb-2">
                             <Calendar
                                 onDayPress={day => {
-                                    setSelectedDate(day.dateString);
+                                    getAvailableSlots(day.dateString, parsedEvent.id);
                                 }}
                                 markedDates={{
                                     [selectedDate]: { selected: true, disableTouchEvent: true, selectedColor: '#4F46E5', selectedTextColor: 'white' }
@@ -88,25 +101,38 @@ const GuestBookingScreen = () => {
                     </View>
 
                     {/* Available Slots */}
-                    <View className="px-6 py-8 border-b border-gray-100">
-                        <View className="flex-row items-center mb-5">
-                            <Feather name="clock" size={18} color="#0F172A" />
-                            <Text className="text-[18px] font-bold text-gray-900 ml-2">Available Slots</Text>
-                        </View>
 
-                        <View className="flex-row flex-wrap gap-3">
-                            {['09:00', '09:45', '10:30', '11:15', '12:00', '13:45'].map((time, idx) => (
-                                <TouchableOpacity
-                                    key={idx}
-                                    activeOpacity={0.7}
-                                    onPress={() => setSelectedSlot(time)}
-                                    className={`py-3.5 px-6 rounded-[14px] border-[1.5px] ${selectedSlot === time ? 'bg-[#4F46E5] border-[#4F46E5]' : 'bg-white border-slate-200'}`}
-                                >
-                                    <Text className={`font-bold text-[15px] ${selectedSlot === time ? 'text-white' : 'text-slate-700'}`}>{time}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    </View>
+
+                    {
+                        availableSlots?.length > 0 ? (
+
+                            <View className="px-6 py-8 border-b border-gray-100">
+                                <View className="flex-row items-center mb-5">
+                                    <Feather name="clock" size={18} color="#0F172A" />
+                                    <Text className="text-[18px] font-bold text-gray-900 ml-2">Available Slots</Text>
+                                </View>
+                                <View className="flex-row flex-wrap gap-3">
+                                    {availableSlots.map((time, idx) => (
+                                        <TouchableOpacity
+                                            key={idx}
+                                            activeOpacity={0.7}
+                                            onPress={() => setSelectedSlot(time)}
+                                            className={`py-3.5 px-5 rounded-[14px] border-[1.5px] ${selectedSlot === time ? 'bg-[#4F46E5] border-[#4F46E5]' : 'bg-white border-slate-200'}`}
+                                        >
+                                            <Text className={`font-bold text-[15px] ${selectedSlot === time ? 'text-white' : 'text-slate-700'}`}>{time}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            </View>
+
+                        ) : (
+                            <View className="flex-row items-center justify-center py-12">
+                                <Feather name="calendar" size={40} color="#CBD5E1" />
+                                <Text className="text-[16px] text-slate-500 ml-3">Select a date to see available slots</Text>
+                            </View>
+                        )
+                    }
+
 
                     {/* Guest Information */}
                     <View className="px-6 py-8">
