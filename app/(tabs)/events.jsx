@@ -30,7 +30,6 @@ const EventsScreen = () => {
   const FetchEventType = async () => {
     const eventtypes = await GetEventType(user.id)
     if (eventtypes) {
-      console.log(eventtypes);
 
       setEvents(eventtypes)
     }
@@ -94,6 +93,20 @@ const EventsScreen = () => {
     FetchEventType()
     eventDetailsSheetRef.current?.dismiss();
   }
+
+
+  const handleBooking = (event) => {
+    eventDetailsSheetRef.current?.dismiss();
+    router.push({
+      pathname: "/guestBookingScreen",
+      params: {
+        event: JSON.stringify(event)
+      }
+    })
+  }
+
+
+
   return (
     <View className="flex-1 bg-[#F8FAFC]">
       {/* Premium Indigo Header */}
@@ -207,7 +220,7 @@ const EventsScreen = () => {
 
               <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={() => handleAction("Book meeting")}
+                onPress={() => handleBooking(selectedEvent)}
                 className="flex-row items-center py-3.5"
               >
                 <Feather name="calendar" size={22} color="#1d4ed8" />

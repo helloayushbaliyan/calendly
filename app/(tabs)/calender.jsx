@@ -83,7 +83,7 @@ const CalenderScreen = () => {
 
   const handleViewContact = useCallback((name, avatar) => {
     meetingDetailsSheetRef.current?.dismiss();
-    
+
     let contactParams = {
       id: "99",
       name: name,
@@ -245,14 +245,12 @@ const CalenderScreen = () => {
             <TouchableOpacity
               key={tab}
               onPress={() => setActiveTab(tab)}
-              className={`flex-1 items-center py-2.5 rounded-full ${
-                activeTab === tab ? "bg-[#4F46E5]" : "bg-transparent"
-              }`}
+              className={`flex-1 items-center py-2.5 rounded-full ${activeTab === tab ? "bg-[#4F46E5]" : "bg-transparent"
+                }`}
             >
               <Text
-                className={`text-[14px] font-bold ${
-                  activeTab === tab ? "text-white" : "text-gray-500"
-                }`}
+                className={`text-[14px] font-bold ${activeTab === tab ? "text-white" : "text-gray-500"
+                  }`}
               >
                 {tab}
               </Text>
