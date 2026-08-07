@@ -29,6 +29,21 @@ const GuestBookingScreen = () => {
 
     }
 
+
+
+    const [bookingData, setbookingData] = useState({
+        event_type_id: parsedEvent?.id,
+        selected_date: selectedDate,
+        selected_slot: selectedSlot,
+        guest_name: "",
+        guest_email: "",
+        notes: "",
+    })
+
+    const handleBooking = () => {
+        console.log("bookingData", bookingData);
+    }
+
     return (
         <SafeAreaView className="flex-1 bg-white" edges={['top']}>
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
@@ -144,6 +159,8 @@ const GuestBookingScreen = () => {
                         <View className="mb-5">
                             <Text className="text-[13px] font-bold text-slate-500 mb-2 ml-1 uppercase tracking-wider">Full Name *</Text>
                             <TextInput
+                                value={bookingData.guest_name}
+                                onChangeText={(value) => setbookingData({ ...bookingData, guest_name: value })}
                                 placeholder="e.g. John Doe"
                                 placeholderTextColor="#94A3B8"
                                 className="bg-slate-50 border border-slate-200 rounded-[16px] px-5 py-4 text-[16px] text-gray-900 font-medium focus:border-[#4F46E5] focus:bg-white"
@@ -153,6 +170,8 @@ const GuestBookingScreen = () => {
                         <View className="mb-5">
                             <Text className="text-[13px] font-bold text-slate-500 mb-2 ml-1 uppercase tracking-wider">Email *</Text>
                             <TextInput
+                                value={bookingData.guest_email}
+                                onChangeText={(value) => setbookingData({ ...bookingData, guest_email: value })}
                                 placeholder="e.g. john@example.com"
                                 placeholderTextColor="#94A3B8"
                                 keyboardType="email-address"
@@ -164,6 +183,8 @@ const GuestBookingScreen = () => {
                         <View className="mb-2">
                             <Text className="text-[13px] font-bold text-slate-500 mb-2 ml-1 uppercase tracking-wider">Notes (Optional)</Text>
                             <TextInput
+                                value={bookingData.notes}
+                                onChangeText={(value) => setbookingData({ ...bookingData, notes: value })}
                                 placeholder="I want to discuss..."
                                 placeholderTextColor="#94A3B8"
                                 multiline={true}
@@ -178,7 +199,7 @@ const GuestBookingScreen = () => {
 
             {/* Bottom Book Meeting Button */}
             <View className="p-6 border-t border-gray-100 bg-white">
-                <TouchableOpacity activeOpacity={0.8} className="bg-[#4F46E5] w-full py-4 rounded-[16px] items-center justify-center shadow-lg shadow-indigo-500/30">
+                <TouchableOpacity activeOpacity={0.8} onPress={handleBooking} className="bg-[#4F46E5] w-full py-4 rounded-[16px] items-center justify-center shadow-lg shadow-indigo-500/30">
                     <Text className="text-white font-bold text-[17px]">Book Meeting</Text>
                 </TouchableOpacity>
             </View>
