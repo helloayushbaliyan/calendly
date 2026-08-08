@@ -26,6 +26,7 @@ const CalenderScreen = () => {
   const [selected, setSelected] = useState(formattedToday);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("All");
+  const [isLoading, setIsLoading] = useState(true);
 
   // Bottom Sheet Refs & States
   const meetingDetailsSheetRef = useRef(null);
@@ -83,75 +84,20 @@ const CalenderScreen = () => {
     });
   }, []);
 
-  const handleViewContact = useCallback((name, avatar) => {
+  const handleViewContact = useCallback((meeting) => {
     meetingDetailsSheetRef.current?.dismiss();
-
-    let contactParams = {
-      id: "99",
-      name: name,
-      email: "contact@" + name.toLowerCase().replace(/\s+/g, "") + ".com",
-      phone: "+91 98765 43210",
-      company: "Acme Partners",
-      role: "Professional Partner",
-      avatar: avatar,
-    };
-
-    const lowercaseName = name.toLowerCase();
-    if (lowercaseName.includes("ayush")) {
-      contactParams = {
-        id: 1,
-        name: "Ayush Baliyan",
-        email: "baliyan2809@gmail.com",
-        phone: "+91 99999 88888",
-        company: "Calendly Corp",
-        role: "Founder",
-        avatar: "https://i.pravatar.cc/150?img=11",
-      };
-    } else if (lowercaseName.includes("pawan")) {
-      contactParams = {
-        id: 2,
-        name: "Pawan Kumar",
-        email: "pawan.kumar@gmail.com",
-        phone: "+91 98765 43210",
-        company: "Acme Corp",
-        role: "Maths Teacher",
-        avatar: "https://i.pravatar.cc/150?img=12",
-      };
-    } else if (lowercaseName.includes("sarah")) {
-      contactParams = {
-        id: 3,
-        name: "Sarah Jenkins",
-        email: "sarah.j@techflow.io",
-        phone: "+1 (555) 123-4567",
-        company: "TechFlow",
-        role: "Product Manager",
-        avatar: "https://i.pravatar.cc/150?img=49",
-      };
-    } else if (lowercaseName.includes("michael")) {
-      contactParams = {
-        id: 4,
-        name: "Michael Chen",
-        email: "m.chen@designhub.co",
-        phone: "+1 (555) 765-4321",
-        company: "DesignHub",
-        role: "Creative Director",
-        avatar: "https://i.pravatar.cc/150?img=33",
-      };
-    } else if (lowercaseName.includes("elena")) {
-      contactParams = {
-        id: 5,
-        name: "Elena Rodriguez",
-        email: "elena.r@designco.com",
-        phone: "+1 (555) 321-7654",
-        company: "DesignCo",
-        role: "Lead UX Designer",
-        avatar: "https://i.pravatar.cc/150?img=47",
-      };
-    }
 
     router.push({
       pathname: "/contactDetails",
-      params: contactParams,
+      params: {
+        id: meeting.id,
+        name: meeting.name,
+        email: meeting.guest_email || "N/A",
+        phone: "N/A",
+        company: "Guest",
+        role: "Attendee",
+        avatar: meeting.avatar,
+      },
     });
   }, [router]);
 
@@ -162,64 +108,84 @@ const CalenderScreen = () => {
     meetingDetailsSheetRef.current?.present();
   }, []);
 
-  const scheduleData = [
-    {
-      date: "Tuesday, May 19",
-      isToday: true,
-      data: [],
-    },
-    {
-      date: "Thursday, May 21",
-      data: [
-        {
-          id: 1,
-          title: "Initial Discovery Call",
-          name: "Sarah Jenkins",
-          time: "9:00 AM - 9:30 AM",
-          color: "#4F46E5", // Elegant Indigo
-          platform: "Google Meet",
-          avatar: "https://i.pravatar.cc/150?img=49",
-          status: "CONFIRMED",
-        },
-        {
-          id: 2,
-          title: "Product Demo",
-          name: "Michael Chen",
-          time: "1:00 PM - 2:00 PM",
-          color: "#F59E0B", // Elegant Orange
-          platform: "Zoom Meeting",
-          avatar: "https://i.pravatar.cc/150?img=12",
-          status: "CONFIRMED",
-        },
-      ],
-    },
-    {
-      date: "Friday, May 22",
-      data: [
-        {
-          id: 3,
-          title: "Portfolio Review",
-          name: "Elena Rodriguez",
-          time: "02:30 PM - 03:30 PM",
-          color: "#10B981", // Emerald
-          platform: "Google Meet",
-          avatar: "https://i.pravatar.cc/150?img=47",
-          status: "CONFIRMED",
-        },
-      ],
-    },
-  ];
-
-
-  const user = useSelector((state) => state.auth.user)
-  const [booking, setBooking] = useState([])
+  const user = useSelector((state) => state.auth.user);
+  const [booking, setBooking] = useState([]);
 
   const getBookings = async () => {
-    const data = await GetBookings(user?.id)
+    setIsLoading(true);
+    const data = await GetBookings(user?.id);
     if (data) {
-      setBooking(data)
+      setBooking(data);
     }
-  }
+    setIsLoading(false);
+  };
+
+  const filteredBookings = useMemo(() => {
+    if (!booking) return [];
+    const now = new Date();
+    
+    return booking.filter(item => {
+      // Create a Date object for the meeting start time
+      const meetingDateTime = new Date(`${item.booking_date}T${item.start_time}`);
+      
+      if (activeTab === "Upcoming") {
+        return meetingDateTime > now;
+      } else if (activeTab === "Completed") {
+        return meetingDateTime <= now;
+      }
+      return true; // "All"
+    });
+  }, [booking, activeTab]);
+
+  const scheduleData = useMemo(() => {
+    if (!filteredBookings || filteredBookings.length === 0) return [];
+
+    const formatTime = (timeStr) => {
+      if (!timeStr) return "";
+      const [h, m] = timeStr.split(':');
+      let hour = parseInt(h, 10);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      hour = hour % 12;
+      hour = hour ? hour : 12;
+      const paddedHour = hour < 10 ? `0${hour}` : hour;
+      return `${paddedHour}:${m} ${ampm}`;
+    };
+
+    const grouped = filteredBookings.reduce((acc, current) => {
+      const dateObj = new Date(`${current.booking_date}T00:00:00`);
+      const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+      
+      if (!acc[dateStr]) {
+        acc[dateStr] = {
+          rawDate: dateObj,
+          date: dateStr,
+          isToday: current.booking_date === formattedToday,
+          data: []
+        };
+      }
+
+      const colors = ["#4F46E5", "#F59E0B", "#10B981", "#EC4899", "#8B5CF6"];
+      const charCode = current.id ? current.id.charCodeAt(current.id.length - 1) : 0;
+      const color = colors[charCode % colors.length];
+
+      acc[dateStr].data.push({
+        id: current.id,
+        title: current.notes || "Meeting",
+        name: current.guest_name || "Guest",
+        guest_email: current.guest_email || "",
+        notes: current.notes || "",
+        time: `${formatTime(current.start_time)} - ${formatTime(current.end_time)}`,
+        color: color,
+        platform: "Video Call",
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(current.guest_name || "Guest")}&background=random`,
+        status: (current.status || "CONFIRMED").toUpperCase(),
+      });
+      
+      return acc;
+    }, {});
+
+    return Object.values(grouped).sort((a, b) => a.rawDate - b.rawDate);
+  }, [filteredBookings, formattedToday]);
 
   useFocusEffect(
     useCallback(() => {
@@ -348,40 +314,41 @@ const CalenderScreen = () => {
 
         {/* Schedule List */}
         <View className="flex-1">
-          {scheduleData.map((group, index) => (
-            <View key={index} className="mb-6">
-              {/* Date Header */}
-              <View className="px-6 mb-4">
-                <View className="flex-row items-center mb-2">
-                  <Text className="text-[13px] font-bold text-gray-400 uppercase tracking-wider">
-                    {group.date}
-                  </Text>
-                  {group.isToday && (
-                    <View className="bg-indigo-50 px-2 py-0.5 rounded ml-2">
-                      <Text className="text-[11px] font-bold text-[#5B4CF0] uppercase">
-                        Today
-                      </Text>
-                    </View>
-                  )}
-                </View>
+          {isLoading ? (
+            <View className="px-6 mb-8 mt-4">
+              <View className="bg-white rounded-[24px] p-6 shadow-sm border border-gray-50 items-center justify-center">
+                <Text className="text-[15px] text-gray-500 font-medium">Loading bookings...</Text>
               </View>
-
-              {/* Meetings */}
-              {group.data.length === 0 ? (
-                <View className="px-6 mb-2">
-                  <View className="bg-white rounded-[24px] p-6 shadow-sm border border-gray-50 items-center justify-center">
-                    <Feather
-                      name="coffee"
-                      size={24}
-                      color="#D1D5DB"
-                      className="mb-3"
-                    />
-                    <Text className="text-[15px] text-gray-500 font-medium">
-                      No meetings scheduled today.
+            </View>
+          ) : scheduleData.length === 0 ? (
+            <View className="px-6 mb-8 mt-4">
+              <View className="bg-white rounded-[24px] p-6 shadow-sm border border-gray-50 items-center justify-center">
+                <Feather name="coffee" size={24} color="#D1D5DB" className="mb-3" />
+                <Text className="text-[15px] text-gray-500 font-medium">
+                  No meetings scheduled
+                </Text>
+              </View>
+            </View>
+          ) : (
+            scheduleData.map((group, index) => (
+              <View key={index} className="mb-6">
+                {/* Date Header */}
+                <View className="px-6 mb-4">
+                  <View className="flex-row items-center mb-2">
+                    <Text className="text-[13px] font-bold text-gray-400 uppercase tracking-wider">
+                      {group.date}
                     </Text>
+                    {group.isToday && (
+                      <View className="bg-indigo-50 px-2 py-0.5 rounded ml-2">
+                        <Text className="text-[11px] font-bold text-[#5B4CF0] uppercase">
+                          Today
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 </View>
-              ) : (
+
+                {/* Meetings */}
                 <View className="px-6 gap-y-4">
                   {group.data.map((meeting) => (
                     <TouchableOpacity
@@ -467,9 +434,9 @@ const CalenderScreen = () => {
                     </TouchableOpacity>
                   ))}
                 </View>
-              )}
-            </View>
-          ))}
+              </View>
+            ))
+          )}
 
           <View className="px-6 mt-2 mb-10 items-center">
             <Text className="text-[13px] text-gray-400 font-medium">
@@ -531,7 +498,7 @@ const CalenderScreen = () => {
                         Time & Duration
                       </Text>
                       <Text className="text-[16px] font-semibold text-slate-700 mt-0.5">
-                        {selectedMeeting.time} (30 mins)
+                        {selectedMeeting.time}
                       </Text>
                     </View>
                   </View>
@@ -572,7 +539,7 @@ const CalenderScreen = () => {
                   {/* View Contact Profile Button */}
                   <TouchableOpacity
                     activeOpacity={0.7}
-                    onPress={() => handleViewContact(selectedMeeting.name, selectedMeeting.avatar)}
+                    onPress={() => handleViewContact(selectedMeeting)}
                     className="flex-row items-center py-3.5 border-b border-slate-50"
                   >
                     <Feather name="user" size={22} color="#1d4ed8" />

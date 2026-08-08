@@ -1,10 +1,10 @@
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { GetAvailableSlots } from "../lib/services/bookingServices";
+import { CreateBooking, GetAvailableSlots } from "../lib/services/bookingServices";
 
 const GuestBookingScreen = () => {
     const router = useRouter();
@@ -33,8 +33,13 @@ const GuestBookingScreen = () => {
         }
     }
 
-    const handleBooking = () => {
-        console.log("bookingData", bookingData);
+    const handleBooking = async () => {
+
+        const data = await CreateBooking(bookingData);
+        if (data) {
+            Alert.alert("Booking Success", "Booking created successfully");
+            router.replace("/(tabs)/calender")
+        }
     }
 
     return (
