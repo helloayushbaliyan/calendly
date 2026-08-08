@@ -182,34 +182,21 @@ const CalenderScreen = () => {
                   {/* Left colored bar */}
                   <View className={`absolute top-0 bottom-0 left-0 w-2 ${index % 2 === 0 ? 'bg-[#F59E0B]' : 'bg-[#10B981]'}`} />
 
-                  {/* Name + Status (Avatar removed) */}
-                  <View className="flex-row justify-between items-start mb-4">
-                    <View className="flex-1 pr-2">
-                      <Text className="text-[18px] font-bold text-slate-800">{item.guest_name}</Text>
-                      <View className="flex-row items-center mt-1.5">
-                        <View className={`w-2 h-2 rounded-full ${index % 2 === 0 ? 'bg-[#F59E0B]' : 'bg-[#10B981]'} mr-2`} />
-                        <Text className="text-[14px] text-slate-500 flex-1" numberOfLines={1}>{item.notes || 'Meeting'}</Text>
-                      </View>
-                    </View>
-                    <View className="bg-[#ECFDF5] px-3 py-1.5 rounded-lg">
-                      <Text className="text-[10px] font-bold text-[#059669] uppercase tracking-wider">{item.status || 'CONFIRMED'}</Text>
-                    </View>
+                  {/* Event Info */}
+                  <View className="">
+                    <Text className="text-[18px] font-bold text-slate-800 mb-1">
+                      {item.events_types?.title || 'Meeting'}
+                    </Text>
+                    <Text className="text-[15px] text-slate-600">
+                      {item.guest_name}
+                    </Text>
                   </View>
 
-                  {/* Time and Platform Details */}
-                  <View className="bg-[#F8FAFC] rounded-[20px] p-4">
-                    <View className="flex-row items-center mb-3.5">
-                      <Feather name="clock" size={16} color={index % 2 === 0 ? '#F59E0B' : '#10B981'} />
-                      <Text className="text-[14px] font-semibold text-slate-700 ml-3">
-                        {formatTime(item.start_time)} - {formatTime(item.end_time)}
-                      </Text>
-                    </View>
-                    <View className="flex-row items-center">
-                      <Feather name="video" size={16} color={index % 2 === 0 ? '#F59E0B' : '#10B981'} />
-                      <Text className="text-[14px] font-semibold text-slate-700 ml-3">
-                        Video Call
-                      </Text>
-                    </View>
+                  {/* Booking Details Box */}
+                  <View className=" rounded-[16px] pt-2">
+                    <Text className="text-[14px] font-medium text-slate-700 mb-1.5">
+                      {formatTime(item.start_time)} - {formatTime(item.end_time)}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               </View>

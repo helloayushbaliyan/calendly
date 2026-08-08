@@ -46,6 +46,7 @@ const BookingDetails = () => {
   }
 
   const isConfirmed = booking.status?.toLowerCase() === 'confirmed';
+  const event = booking.events_types || {};
 
   return (
     <View className="flex-1 bg-[#F8FAFC]">
@@ -62,120 +63,80 @@ const BookingDetails = () => {
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
-        {/* Status Highlight Card */}
-        <View className="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100 mb-6 items-center relative overflow-hidden">
-          <View className={`absolute top-0 w-full h-2 ${isConfirmed ? 'bg-emerald-500' : 'bg-amber-400'}`} />
-          
-          <View className={`w-16 h-16 rounded-full items-center justify-center mb-4 mt-2 ${isConfirmed ? 'bg-emerald-100' : 'bg-amber-100'}`}>
-            <Feather name={isConfirmed ? "check-circle" : "clock"} size={32} color={isConfirmed ? "#059669" : "#D97706"} />
+        
+        {/* Header Summary */}
+        <View className="mb-8">
+          <View className="flex-row items-center mb-2">
+            <View className={`w-3 h-3 rounded-full ${isConfirmed ? 'bg-[#10B981]' : 'bg-[#F59E0B]'} mr-3`} />
+            <Text className="text-[24px] font-bold text-slate-800">{event?.title || 'Meeting'}</Text>
           </View>
-          <Text className="text-[24px] font-bold text-slate-800 mb-1">{booking.guest_name}</Text>
-          
-          <View className={`px-4 py-2 rounded-xl mt-3 ${isConfirmed ? 'bg-emerald-50' : 'bg-amber-50'}`}>
-            <Text className={`text-[12px] font-bold uppercase tracking-wider ${isConfirmed ? 'text-emerald-600' : 'text-amber-600'}`}>
-              {booking.status || 'PENDING'}
-            </Text>
+          <Text className="text-[16px] text-slate-500 mb-1">{booking.guest_name}</Text>
+          <Text className="text-[14px] text-slate-400 mb-4">
+            {formatDateHeader(booking.booking_date)} · {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
+          </Text>
+          <View className="self-start px-3 py-1.5 bg-slate-100 rounded-lg">
+            <Text className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">{booking.status}</Text>
           </View>
         </View>
 
-        {/* Date & Time Info */}
-        <View className="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100 mb-6">
-          <Text className="text-[12px] font-bold text-slate-400 tracking-widest mb-5">SCHEDULE</Text>
+        {/* Meeting Details Card */}
+        <View className="bg-white rounded-[20px] p-6 shadow-sm border border-slate-100 mb-6">
+          <Text className="text-[15px] font-bold text-slate-800 mb-5">Meeting details</Text>
           
-          <View className="flex-row items-center mb-5">
-            <View className="w-12 h-12 rounded-full bg-indigo-50 items-center justify-center mr-4">
-              <Feather name="calendar" size={20} color="#5B4CF0" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-[13px] text-slate-500 mb-1">Date</Text>
-              <Text className="text-[16px] font-bold text-slate-800">{formatDateHeader(booking.booking_date)}</Text>
+          <View className="flex-row items-start mb-5">
+            <Feather name="video" size={20} color="#64748B" style={{ marginTop: 2 }} />
+            <View className="ml-4 flex-1">
+              <Text className="text-[16px] font-semibold text-slate-800 mb-1">
+                {event?.location_type || 'Platform'}
+              </Text>
+              {event?.meeting_link ? (
+                <TouchableOpacity activeOpacity={0.7} className="mt-1">
+                  <Text className="text-[14px] text-[#5B4CF0] font-medium" numberOfLines={1}>{event.meeting_link}</Text>
+                </TouchableOpacity>
+              ) : (
+                <Text className="text-[14px] text-slate-400 italic mt-0.5">Meeting link unavailable</Text>
+              )}
             </View>
           </View>
-
+          
           <View className="flex-row items-center">
-            <View className="w-12 h-12 rounded-full bg-orange-50 items-center justify-center mr-4">
-              <Feather name="clock" size={20} color="#F59E0B" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-[13px] text-slate-500 mb-1">Time</Text>
-              <Text className="text-[16px] font-bold text-slate-800">
-                {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
+            <Feather name="clock" size={20} color="#64748B" />
+            <Text className="text-[16px] text-slate-700 ml-4">{event?.duration || 30} Minute Meeting</Text>
+          </View>
+        </View>
+
+        {/* Invitee Details Card */}
+        <View className="bg-white rounded-[20px] p-6 shadow-sm border border-slate-100 mb-6">
+          <Text className="text-[15px] font-bold text-slate-800 mb-5">Invitee details</Text>
+          
+          <View className="flex-row items-center mb-5">
+            <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center mr-4 border border-slate-200">
+              <Text className="text-[14px] font-bold text-slate-600">
+                {booking.guest_name ? booking.guest_name.substring(0, 2).toUpperCase() : 'GN'}
               </Text>
             </View>
+            <Text className="text-[16px] font-semibold text-slate-800">{booking.guest_name}</Text>
           </View>
-        </View>
 
-        {/* Contact Info */}
-        <View className="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100 mb-6">
-          <Text className="text-[12px] font-bold text-slate-400 tracking-widest mb-5">GUEST INFO</Text>
-          
           <View className="flex-row items-center mb-5">
-            <View className="w-10 h-10 rounded-full bg-slate-50 items-center justify-center mr-4">
-              <Feather name="user" size={18} color="#64748B" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-[13px] text-slate-500 mb-1">Name</Text>
-              <Text className="text-[15px] font-semibold text-slate-800">{booking.guest_name}</Text>
-            </View>
+            <Feather name="check-circle" size={18} color="#64748B" />
+            <Text className="text-[15px] text-slate-700 ml-4 capitalize">{booking.status}</Text>
           </View>
 
-          <View className="flex-row items-center">
-            <View className="w-10 h-10 rounded-full bg-slate-50 items-center justify-center mr-4">
-              <Feather name="mail" size={18} color="#64748B" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-[13px] text-slate-500 mb-1">Email Address</Text>
-              <Text className="text-[15px] font-semibold text-slate-800">{booking.guest_email}</Text>
-            </View>
+          <View className="flex-row items-center mb-5">
+            <Feather name="mail" size={18} color="#64748B" />
+            <Text className="text-[15px] text-[#5B4CF0] ml-4 font-medium">{booking.guest_email}</Text>
           </View>
+          
+          {booking.notes && (
+            <View className="mt-1 bg-slate-50 p-4 rounded-xl border border-slate-100">
+              <Text className="text-[12px] font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Notes</Text>
+              <Text className="text-[15px] text-slate-700 leading-6">{booking.notes}</Text>
+            </View>
+          )}
         </View>
 
-        {/* Notes */}
-        <View className="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100 mb-6">
-          <Text className="text-[12px] font-bold text-slate-400 tracking-widest mb-4">NOTES</Text>
-          <Text className="text-[15px] text-slate-700 leading-6">
-            {booking.notes || "No notes provided for this booking."}
-          </Text>
-        </View>
 
-        {/* System Details (Advanced) */}
-        <View className="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100">
-          <Text className="text-[12px] font-bold text-slate-400 tracking-widest mb-5">API & SYSTEM METADATA</Text>
-          
-          <View className="flex-row items-center justify-between py-3 border-b border-slate-50">
-            <Text className="text-[13px] text-slate-500">Booking ID</Text>
-            <Text className="text-[13px] font-mono text-slate-800" selectable>{booking.id}</Text>
-          </View>
-          
-          <View className="flex-row items-center justify-between py-3 border-b border-slate-50">
-            <Text className="text-[13px] text-slate-500">Host ID</Text>
-            <Text className="text-[13px] font-mono text-slate-800" selectable>{booking.host_id}</Text>
-          </View>
-          
-          <View className="flex-row items-center justify-between py-3 border-b border-slate-50">
-            <Text className="text-[13px] text-slate-500">Event Type ID</Text>
-            <Text className="text-[13px] font-mono text-slate-800" selectable>{booking.event_type_id}</Text>
-          </View>
-          
-          <View className="flex-row items-center justify-between py-3 border-b border-slate-50">
-            <Text className="text-[13px] text-slate-500">Created At</Text>
-            <Text className="text-[13px] text-slate-800">
-              {new Date(booking.created_at).toLocaleString()}
-            </Text>
-          </View>
-          
-          <View className="flex-row items-center justify-between py-3">
-            <Text className="text-[13px] text-slate-500">Updated At</Text>
-            <Text className="text-[13px] text-slate-800">
-              {booking.updated_at ? new Date(booking.updated_at).toLocaleString() : '-'}
-            </Text>
-          </View>
-        </View>
-        
-        {/* Delete / Cancel Action (Stub) */}
-        <TouchableOpacity className="mt-8 mb-4 items-center">
-          <Text className="text-red-500 font-bold">Cancel This Booking</Text>
-        </TouchableOpacity>
 
       </ScrollView>
     </View>
