@@ -13,32 +13,25 @@ const GuestBookingScreen = () => {
     // The event string needs to be converted back into a Javascript object
     const parsedEvent = event ? JSON.parse(event) : null;
 
-    const [selectedSlot, setSelectedSlot] = useState(null);
-    const [selectedDate, setSelectedDate] = useState('');
-    console.log("selectedDate", selectedDate)
-
     const [availableSlots, setAvailableSlots] = useState([])
 
+    const [bookingData, setbookingData] = useState({
+        event_type_id: parsedEvent?.id,
+        selected_date: "",
+        selected_slot: "",
+        guest_name: "",
+        guest_email: "",
+        notes: "",
+    })
+
     const getAvailableSlots = async (dateString, eventId) => {
-        setSelectedDate(dateString)
+        setbookingData(prev => ({ ...prev, selected_date: dateString }))
         const result = await GetAvailableSlots(eventId, dateString);
         if (result) {
             console.log("result", result);
             setAvailableSlots(result.slots)
         }
-
     }
-
-
-
-    const [bookingData, setbookingData] = useState({
-        event_type_id: parsedEvent?.id,
-        selected_date: selectedDate,
-        selected_slot: selectedSlot,
-        guest_name: "",
-        guest_email: "",
-        notes: "",
-    })
 
     const handleBooking = () => {
         console.log("bookingData", bookingData);
@@ -88,7 +81,7 @@ const GuestBookingScreen = () => {
                                     getAvailableSlots(day.dateString, parsedEvent.id);
                                 }}
                                 markedDates={{
-                                    [selectedDate]: { selected: true, disableTouchEvent: true, selectedColor: '#4F46E5', selectedTextColor: 'white' }
+                                    [bookingData.selected_date]: { selected: true, disableTouchEvent: true, selectedColor: '#4F46E5', selectedTextColor: 'white' }
                                 }}
                                 theme={{
                                     backgroundColor: '#ffffff',
@@ -131,10 +124,10 @@ const GuestBookingScreen = () => {
                                         <TouchableOpacity
                                             key={idx}
                                             activeOpacity={0.7}
-                                            onPress={() => setSelectedSlot(time)}
-                                            className={`py-3.5 px-5 rounded-[14px] border-[1.5px] ${selectedSlot === time ? 'bg-[#4F46E5] border-[#4F46E5]' : 'bg-white border-slate-200'}`}
+                                            onPress={() => setbookingData({ ...bookingData, selected_slot: time })}
+                                            className={`py-3.5 px-5 rounded-[14px] border-[1.5px] ${bookingData.selected_slot === time ? 'bg-[#4F46E5] border-[#4F46E5]' : 'bg-white border-slate-200'}`}
                                         >
-                                            <Text className={`font-bold text-[15px] ${selectedSlot === time ? 'text-white' : 'text-slate-700'}`}>{time}</Text>
+                                            <Text className={`font-bold text-[15px] ${bookingData.selected_slot === time ? 'text-white' : 'text-slate-700'}`}>{time}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
