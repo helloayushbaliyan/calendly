@@ -4,7 +4,7 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
@@ -16,6 +16,8 @@ import {
   View,
 } from "react-native";
 import { Calendar } from "react-native-calendars";
+import { useSelector } from "react-redux";
+import { GetBookings } from "../../lib/services/bookingServices";
 
 const CalenderScreen = () => {
   const router = useRouter();
@@ -208,6 +210,24 @@ const CalenderScreen = () => {
     },
   ];
 
+
+  const user = useSelector((state) => state.auth.user)
+  const [booking, setBooking] = useState([])
+
+  const getBookings = async () => {
+    const data = await GetBookings(user?.id)
+    if (data) {
+      setBooking(data)
+    }
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.id) {
+        getBookings()
+      }
+    }, [user?.id])
+  )
   return (
     <View className="flex-1 bg-[#F8FAFC]">
       {/* Premium Header */}
